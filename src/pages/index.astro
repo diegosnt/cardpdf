@@ -1,0 +1,820 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { CARD_CONFIG } from '../utils/constants';
+---
+
+<Layout>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    
+    <!-- Panel Izquierdo: Carga, Edición y Opciones (6 cols) -->
+    <div class="lg:col-span-6 space-y-6">
+      
+      <!-- Encabezado de la aplicación -->
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-sky-500/20 text-sky-400 uppercase tracking-wider border border-sky-500/30">
+            Estándar Internacional
+          </span>
+          <span class="text-xs text-slate-300 font-mono font-semibold">ISO/IEC 7810 ID-1 (CR80)</span>
+          <span class="text-[11px] text-slate-400 font-mono">• Proporción 1.586</span>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-white tracking-tight">
+            Fotocopia de Tarjetas y Documentos en Tamaño Real (A4)
+          </h1>
+          <p class="text-sm text-slate-300 mt-1 leading-relaxed">
+            Sube las fotos del frente y dorso de cualquier documento o tarjeta bajo la norma ID-1 / CR80 
+            (<span class="font-mono text-sky-300">{CARD_CONFIG.WIDTH_MM} × {CARD_CONFIG.HEIGHT_MM} mm</span>). 
+            La aplicación las recorta con esquinas redondeadas (<span class="font-mono text-sky-300">{CARD_CONFIG.CORNER_RADIUS_MM} mm</span>) 
+            y las posiciona matemáticamente a escala 100% sobre una hoja A4 lista para imprimir.
+          </p>
+        </div>
+
+        <!-- Badges de compatibilidad universal -->
+        <div class="flex flex-wrap gap-1.5 pt-1 text-[11px] text-slate-300">
+          <span class="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60 flex items-center gap-1">🪪 DNI / Identidad</span>
+          <span class="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60 flex items-center gap-1">🚗 Licencia de Conducir</span>
+          <span class="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60 flex items-center gap-1">🚙 Cédula Verde / Azul</span>
+          <span class="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60 flex items-center gap-1">🏢 Credencial Corporativa</span>
+          <span class="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60 flex items-center gap-1">🏥 Carnet de Salud / Obra Social</span>
+          <span class="px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/60 flex items-center gap-1">💳 Tarjeta de Transporte</span>
+        </div>
+      </div>
+
+      <!-- Zonas de Carga: Frente y Dorso -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        
+        <!-- CARD: FRENTE -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-sm" id="box-front">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 text-xs font-bold flex items-center justify-center border border-sky-500/30">1</span>
+                <h2 class="font-bold text-xs text-slate-200 uppercase tracking-wider">Frente de la Tarjeta</h2>
+              </div>
+              <span id="badge-front" class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                Vacío
+              </span>
+            </div>
+
+            <!-- Dropzone Frente -->
+            <div 
+              id="dropzone-front" 
+              class="relative border-2 border-dashed border-slate-700 hover:border-sky-500 hover:bg-sky-500/5 rounded-xl p-3 text-center cursor-pointer transition-all duration-200 group flex flex-col items-center justify-center min-h-[175px]"
+            >
+              <input type="file" id="file-front" accept="image/jpeg,image/png,image/webp" class="hidden" />
+              
+              <!-- Estado inicial sin foto -->
+              <div id="empty-state-front" class="space-y-2 pointer-events-none">
+                <div class="w-12 h-12 mx-auto rounded-full bg-slate-800 group-hover:bg-sky-500/20 text-slate-400 group-hover:text-sky-400 flex items-center justify-center transition-colors">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div class="text-xs text-slate-300 font-medium">
+                  <span class="text-sky-400 underline">Elegir foto</span> o arrastrar
+                </div>
+                <p class="text-[10px] text-slate-500">JPG, PNG o WebP</p>
+              </div>
+
+              <!-- Vista interactiva con foto cargada -->
+              <div id="preview-container-front" class="hidden w-full flex flex-col items-center justify-center">
+                <div class="relative w-full aspect-[85.6/53.98] rounded-[6px] overflow-hidden shadow-md border border-slate-700 bg-slate-950 cursor-grab active:cursor-grabbing group/canvas">
+                  <canvas id="mini-canvas-front" class="w-full h-full object-cover block"></canvas>
+                  <div class="absolute bottom-1 right-1 bg-black/70 text-[9px] text-slate-300 px-1.5 py-0.5 rounded opacity-75 group-hover/canvas:opacity-100 pointer-events-none">
+                    Arrastra para centrar
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Herramientas rápidas Frente -->
+          <div id="controls-front" class="hidden mt-3 pt-3 border-t border-slate-800 space-y-2">
+            <!-- Barra de botones: Rotar, Recentrar, Eliminar -->
+            <div class="flex items-center gap-1.5 text-xs">
+              <button 
+                type="button" 
+                id="btn-rotate-front" 
+                class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg flex items-center justify-center gap-1 transition font-medium text-[11px]"
+                title="Girar 90° a la derecha"
+              >
+                <svg class="w-3.5 h-3.5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Girar 90°</span>
+              </button>
+
+              <button 
+                type="button" 
+                id="btn-reset-front" 
+                class="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition font-medium text-[11px]"
+                title="Restablecer posición y zoom"
+              >
+                Recentrar
+              </button>
+
+              <button 
+                type="button" 
+                id="btn-remove-front" 
+                class="py-1.5 px-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-medium text-[11px]"
+                title="Quitar foto"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Control de Zoom -->
+            <div class="flex items-center gap-2 bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
+              <span class="text-[10px] text-slate-400 font-medium w-10">Zoom</span>
+              <input 
+                type="range" 
+                id="zoom-front" 
+                min="0.6" 
+                max="2.5" 
+                step="0.05" 
+                value="1" 
+                class="w-full accent-sky-500 cursor-pointer h-1 bg-slate-800 rounded-lg"
+              />
+              <span id="zoom-val-front" class="text-[10px] font-mono text-slate-300 w-8 text-right">100%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD: DORSO -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-sm" id="box-back">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center border border-indigo-500/30">2</span>
+                <h2 class="font-bold text-xs text-slate-200 uppercase tracking-wider">Dorso de la Tarjeta</h2>
+              </div>
+              <span id="badge-back" class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                Vacío
+              </span>
+            </div>
+
+            <!-- Dropzone Dorso -->
+            <div 
+              id="dropzone-back" 
+              class="relative border-2 border-dashed border-slate-700 hover:border-indigo-500 hover:bg-indigo-500/5 rounded-xl p-3 text-center cursor-pointer transition-all duration-200 group flex flex-col items-center justify-center min-h-[175px]"
+            >
+              <input type="file" id="file-back" accept="image/jpeg,image/png,image/webp" class="hidden" />
+              
+              <!-- Estado inicial sin foto -->
+              <div id="empty-state-back" class="space-y-2 pointer-events-none">
+                <div class="w-12 h-12 mx-auto rounded-full bg-slate-800 group-hover:bg-indigo-500/20 text-slate-400 group-hover:text-indigo-400 flex items-center justify-center transition-colors">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div class="text-xs text-slate-300 font-medium">
+                  <span class="text-indigo-400 underline">Elegir foto</span> o arrastrar
+                </div>
+                <p class="text-[10px] text-slate-500">JPG, PNG o WebP</p>
+              </div>
+
+              <!-- Vista interactiva con foto cargada -->
+              <div id="preview-container-back" class="hidden w-full flex flex-col items-center justify-center">
+                <div class="relative w-full aspect-[85.6/53.98] rounded-[6px] overflow-hidden shadow-md border border-slate-700 bg-slate-950 cursor-grab active:cursor-grabbing group/canvas">
+                  <canvas id="mini-canvas-back" class="w-full h-full object-cover block"></canvas>
+                  <div class="absolute bottom-1 right-1 bg-black/70 text-[9px] text-slate-300 px-1.5 py-0.5 rounded opacity-75 group-hover/canvas:opacity-100 pointer-events-none">
+                    Arrastra para centrar
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Herramientas rápidas Dorso -->
+          <div id="controls-back" class="hidden mt-3 pt-3 border-t border-slate-800 space-y-2">
+            <!-- Barra de botones: Rotar, Recentrar, Eliminar -->
+            <div class="flex items-center gap-1.5 text-xs">
+              <button 
+                type="button" 
+                id="btn-rotate-back" 
+                class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg flex items-center justify-center gap-1 transition font-medium text-[11px]"
+                title="Girar 90° a la derecha"
+              >
+                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Girar 90°</span>
+              </button>
+
+              <button 
+                type="button" 
+                id="btn-reset-back" 
+                class="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition font-medium text-[11px]"
+                title="Restablecer posición y zoom"
+              >
+                Recentrar
+              </button>
+
+              <button 
+                type="button" 
+                id="btn-remove-back" 
+                class="py-1.5 px-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-medium text-[11px]"
+                title="Quitar foto"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Control de Zoom -->
+            <div class="flex items-center gap-2 bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
+              <span class="text-[10px] text-slate-400 font-medium w-10">Zoom</span>
+              <input 
+                type="range" 
+                id="zoom-back" 
+                min="0.6" 
+                max="2.5" 
+                step="0.05" 
+                value="1" 
+                class="w-full accent-indigo-500 cursor-pointer h-1 bg-slate-800 rounded-lg"
+              />
+              <span id="zoom-val-back" class="text-[10px] font-mono text-slate-300 w-8 text-right">100%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Configuración de Estilo y Opciones de Impresión -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+            <svg class="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            <span>Estilo de la Fotocopia</span>
+          </h3>
+          <span class="text-[11px] text-slate-400">Salida para impresión</span>
+        </div>
+
+        <!-- Selector de Estilo de Fotocopia -->
+        <div class="grid grid-cols-3 gap-2" id="color-mode-selector">
+          <button 
+            type="button" 
+            data-mode="original" 
+            class="color-mode-btn active px-3 py-2.5 rounded-xl border text-left flex flex-col gap-1 transition-all bg-sky-500/15 border-sky-500 text-white cursor-pointer"
+          >
+            <span class="text-xs font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-sky-400 shadow-sm shadow-sky-400/50"></span> Color Real
+            </span>
+            <span class="text-[10px] text-slate-400">Foto original</span>
+          </button>
+
+          <button 
+            type="button" 
+            data-mode="grayscale" 
+            class="color-mode-btn px-3 py-2.5 rounded-xl border border-slate-800 hover:border-slate-700 text-left flex flex-col gap-1 transition-all text-slate-300 cursor-pointer"
+          >
+            <span class="text-xs font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span> Grises
+            </span>
+            <span class="text-[10px] text-slate-400">Monocromático</span>
+          </button>
+
+          <button 
+            type="button" 
+            data-mode="photocopy" 
+            class="color-mode-btn px-3 py-2.5 rounded-xl border border-slate-800 hover:border-slate-700 text-left flex flex-col gap-1 transition-all text-slate-300 cursor-pointer"
+          >
+            <span class="text-xs font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-white shadow-sm"></span> Tóner B&N
+            </span>
+            <span class="text-[10px] text-slate-400">Alto contraste</span>
+          </button>
+        </div>
+
+
+        <!-- Botón de Descarga Principal -->
+        <button 
+          type="button" 
+          id="btn-download-pdf" 
+          disabled
+          class="w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-sky-500/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span id="btn-download-text">Descargar Fotocopia PDF (A4 - 100%)</span>
+        </button>
+
+      </div>
+
+      <!-- Ficha técnica informativa de las medidas -->
+      <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-4 text-xs text-slate-400 space-y-2">
+        <div class="font-bold text-slate-300 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+          <span>📐 Parámetros de Precisión Geométrica</span>
+        </div>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px]">
+          <div>• Norma: <span class="text-slate-200 font-mono">ISO/IEC 7810 ID-1 (CR80)</span></div>
+          <div>• Tamaño: <span class="text-slate-200 font-mono">85.60 × 53.98 mm</span></div>
+          <div>• Proporción: <span class="text-slate-200 font-mono">1.586 (Estándar)</span></div>
+          <div>• Radio curvatura: <span class="text-slate-200 font-mono">3.18 mm</span></div>
+          <div>• Hoja de salida: <span class="text-slate-200 font-mono">A4 (210 × 297 mm)</span></div>
+          <div>• Centrado horizontal: <span class="text-slate-200 font-mono">X = 62.20 mm</span></div>
+          <div>• Posición Frente: <span class="text-slate-200 font-mono">Y = 35.00 mm (Superior)</span></div>
+          <div>• Posición Dorso: <span class="text-slate-200 font-mono">Y = 115.00 mm</span></div>
+          <div>• Separación vertical: <span class="text-slate-200 font-mono">26.02 mm</span></div>
+          <div>• Resolución: <span class="text-slate-200 font-mono">300 DPI (100% escala)</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Panel Derecho: Vista Previa Hoja A4 Interactiva (6 cols) -->
+    <div class="lg:col-span-6 sticky top-20">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+        
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <h2 class="font-bold text-sm text-slate-200">Vista Previa Hoja A4</h2>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+            Escala 100% Real
+          </span>
+        </div>
+
+        <!-- Contenedor de la Hoja A4 -->
+        <div class="relative w-full max-w-[430px] mx-auto bg-slate-950 p-4 sm:p-6 rounded-xl border border-slate-800/80 flex items-center justify-center">
+          
+          <!-- Hoja A4 simulada (relación de aspecto 210/297) -->
+          <div 
+            id="a4-sheet"
+            class="relative w-full aspect-[210/297] bg-white rounded-[2px] shadow-2xl overflow-hidden select-none border border-slate-300 transition-all duration-300"
+          >
+            <!-- Cuadrícula milimétrica sutil -->
+            <div class="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:16px_16px] opacity-40 pointer-events-none"></div>
+
+            <!-- Rótulo A4 -->
+            <div class="absolute top-2.5 left-3 text-[8px] font-mono text-slate-400 font-medium select-none">
+              A4 • 210 × 297 mm
+            </div>
+
+            <!-- TARJETA FRENTE en la hoja (Elevada Y = 35.00 mm -> 11.785%) -->
+            <div 
+              id="sheet-card-front"
+              class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
+              style="left: 29.619%; top: 11.785%; width: 40.762%; height: 18.175%;"
+            >
+              <canvas id="canvas-preview-front" class="w-full h-full object-cover hidden cursor-grab active:cursor-grabbing"></canvas>
+              
+              <div id="placeholder-preview-front" class="text-center p-1">
+                <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 block">FRENTE</span>
+                <span class="text-[7px] text-slate-300 font-mono block">85.60 × 53.98 mm</span>
+              </div>
+            </div>
+
+            <!-- TARJETA DORSO en la hoja (Elevada Y = 115.00 mm -> 38.721%) -->
+            <div 
+              id="sheet-card-back"
+              class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
+              style="left: 29.619%; top: 38.721%; width: 40.762%; height: 18.175%;"
+            >
+              <canvas id="canvas-preview-back" class="w-full h-full object-cover hidden cursor-grab active:cursor-grabbing"></canvas>
+              
+              <div id="placeholder-preview-back" class="text-center p-1">
+                <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 block">DORSO</span>
+                <span class="text-[7px] text-slate-300 font-mono block">85.60 × 53.98 mm</span>
+              </div>
+            </div>
+
+            <!-- Cota de separación matemática (34.34%) -->
+            <div class="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none" style="top: 32.5%;">
+              <span class="text-[7px] text-slate-400 bg-white/95 px-1.5 py-0.5 rounded shadow-xs border border-slate-200">
+                Separación: 26.02 mm
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="flex items-center justify-between text-[11px] text-slate-400 px-1">
+          <span>📏 Tamaño real 1:1 al imprimir sin escalar</span>
+          <span class="text-slate-300 font-mono">DPI: 300</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</Layout>
+
+<script>
+  import { loadFileAsImage, renderCardToCanvas, type CardState } from '../utils/imageProcessor';
+  import { generateAndDownloadPdf } from '../utils/pdfGenerator';
+  import { CARD_CONFIG, type ColorMode } from '../utils/constants';
+
+  // Estados de las tarjetas
+  const frontCard: CardState = {
+    file: null,
+    imageElement: null,
+    rotation: 0,
+    zoom: 1.0,
+    offsetX: 0,
+    offsetY: 0
+  };
+
+  const backCard: CardState = {
+    file: null,
+    imageElement: null,
+    rotation: 0,
+    zoom: 1.0,
+    offsetX: 0,
+    offsetY: 0
+  };
+
+  let currentColorMode: ColorMode = 'original';
+  let includeBorder: boolean = true;
+
+  // DOM Elements - Frente
+  const dropzoneFront = document.getElementById('dropzone-front') as HTMLElement;
+  const fileFront = document.getElementById('file-front') as HTMLInputElement;
+  const emptyStateFront = document.getElementById('empty-state-front') as HTMLElement;
+  const previewContainerFront = document.getElementById('preview-container-front') as HTMLElement;
+  const miniCanvasFront = document.getElementById('mini-canvas-front') as HTMLCanvasElement;
+  const controlsFront = document.getElementById('controls-front') as HTMLElement;
+  const btnRotateFront = document.getElementById('btn-rotate-front') as HTMLButtonElement;
+  const btnResetFront = document.getElementById('btn-reset-front') as HTMLButtonElement;
+  const btnRemoveFront = document.getElementById('btn-remove-front') as HTMLButtonElement;
+  const zoomFront = document.getElementById('zoom-front') as HTMLInputElement;
+  const zoomValFront = document.getElementById('zoom-val-front') as HTMLElement;
+  const badgeFront = document.getElementById('badge-front') as HTMLElement;
+  const canvasPreviewFront = document.getElementById('canvas-preview-front') as HTMLCanvasElement;
+  const placeholderPreviewFront = document.getElementById('placeholder-preview-front') as HTMLElement;
+  const sheetCardFront = document.getElementById('sheet-card-front') as HTMLElement;
+
+  // DOM Elements - Dorso
+  const dropzoneBack = document.getElementById('dropzone-back') as HTMLElement;
+  const fileBack = document.getElementById('file-back') as HTMLInputElement;
+  const emptyStateBack = document.getElementById('empty-state-back') as HTMLElement;
+  const previewContainerBack = document.getElementById('preview-container-back') as HTMLElement;
+  const miniCanvasBack = document.getElementById('mini-canvas-back') as HTMLCanvasElement;
+  const controlsBack = document.getElementById('controls-back') as HTMLElement;
+  const btnRotateBack = document.getElementById('btn-rotate-back') as HTMLButtonElement;
+  const btnResetBack = document.getElementById('btn-reset-back') as HTMLButtonElement;
+  const btnRemoveBack = document.getElementById('btn-remove-back') as HTMLButtonElement;
+  const zoomBack = document.getElementById('zoom-back') as HTMLInputElement;
+  const zoomValBack = document.getElementById('zoom-val-back') as HTMLElement;
+  const badgeBack = document.getElementById('badge-back') as HTMLElement;
+  const canvasPreviewBack = document.getElementById('canvas-preview-back') as HTMLCanvasElement;
+  const placeholderPreviewBack = document.getElementById('placeholder-preview-back') as HTMLElement;
+  const sheetCardBack = document.getElementById('sheet-card-back') as HTMLElement;
+
+  // Elementos Globales
+  const btnDownload = document.getElementById('btn-download-pdf') as HTMLButtonElement;
+  const btnDownloadText = document.getElementById('btn-download-text') as HTMLElement;
+  const colorModeButtons = document.querySelectorAll<HTMLButtonElement>('.color-mode-btn');
+
+  // Actualiza el renderizado Canvas
+  async function updateCardRender(side: 'front' | 'back') {
+    const card = side === 'front' ? frontCard : backCard;
+    const miniCanvas = side === 'front' ? miniCanvasFront : miniCanvasBack;
+    const previewCanvas = side === 'front' ? canvasPreviewFront : canvasPreviewBack;
+    const placeholder = side === 'front' ? placeholderPreviewFront : placeholderPreviewBack;
+    const sheetContainer = side === 'front' ? sheetCardFront : sheetCardBack;
+
+    if (!card.imageElement) {
+      previewCanvas.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+      sheetContainer.classList.remove('border-none');
+      sheetContainer.classList.add('border-dashed', 'border-slate-300');
+      return;
+    }
+
+    try {
+      // Sin marcos ni líneas grises añadidas
+      const renderedCanvas = await renderCardToCanvas(card, currentColorMode, false);
+
+      // Miniatura en Dropzone
+      miniCanvas.width = renderedCanvas.width;
+      miniCanvas.height = renderedCanvas.height;
+      const miniCtx = miniCanvas.getContext('2d');
+      miniCtx?.drawImage(renderedCanvas, 0, 0);
+
+      // Canvas en Hoja A4
+      previewCanvas.width = renderedCanvas.width;
+      previewCanvas.height = renderedCanvas.height;
+      const prevCtx = previewCanvas.getContext('2d');
+      prevCtx?.drawImage(renderedCanvas, 0, 0);
+
+      previewCanvas.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      sheetContainer.classList.remove('border-dashed', 'border-slate-300', 'border-solid', 'border-slate-400');
+      sheetContainer.classList.add('border-none');
+    } catch (err) {
+      console.error(`Error al procesar ${side}:`, err);
+    }
+  }
+
+  // Actualiza estado de descarga
+  function updateDownloadButtonState() {
+    const hasAnyImage = frontCard.imageElement !== null || backCard.imageElement !== null;
+    const hasBothImages = frontCard.imageElement !== null && backCard.imageElement !== null;
+
+    btnDownload.disabled = !hasAnyImage;
+
+    if (hasBothImages) {
+      btnDownloadText.textContent = 'Descargar Fotocopia PDF (Frente y Dorso)';
+    } else if (frontCard.imageElement !== null) {
+      btnDownloadText.textContent = 'Descargar Fotocopia PDF (Solo Frente)';
+    } else if (backCard.imageElement !== null) {
+      btnDownloadText.textContent = 'Descargar Fotocopia PDF (Solo Dorso)';
+    } else {
+      btnDownloadText.textContent = 'Descargar Fotocopia PDF (A4 - 100%)';
+    }
+  }
+
+  // Manejador de selección de imagen
+  async function handleFileSelect(file: File, side: 'front' | 'back') {
+    try {
+      const img = await loadFileAsImage(file);
+      const card = side === 'front' ? frontCard : backCard;
+      card.file = file;
+      card.imageElement = img;
+      card.rotation = 0;
+      card.zoom = 1.0;
+      card.offsetX = 0;
+      card.offsetY = 0;
+
+      if (side === 'front') {
+        zoomFront.value = '1';
+        zoomValFront.textContent = '100%';
+        emptyStateFront.classList.add('hidden');
+        previewContainerFront.classList.remove('hidden');
+        controlsFront.classList.remove('hidden');
+        badgeFront.textContent = 'Listo';
+        badgeFront.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30';
+      } else {
+        zoomBack.value = '1';
+        zoomValBack.textContent = '100%';
+        emptyStateBack.classList.add('hidden');
+        previewContainerBack.classList.remove('hidden');
+        controlsBack.classList.remove('hidden');
+        badgeBack.textContent = 'Listo';
+        badgeBack.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30';
+      }
+
+      await updateCardRender(side);
+      updateDownloadButtonState();
+    } catch (err) {
+      alert((err as Error).message || 'Error al cargar la imagen');
+    }
+  }
+
+  // Quitar imagen
+  function handleRemoveFile(side: 'front' | 'back') {
+    const card = side === 'front' ? frontCard : backCard;
+    card.file = null;
+    card.imageElement = null;
+    card.rotation = 0;
+    card.zoom = 1.0;
+    card.offsetX = 0;
+    card.offsetY = 0;
+
+    if (side === 'front') {
+      fileFront.value = '';
+      emptyStateFront.classList.remove('hidden');
+      previewContainerFront.classList.add('hidden');
+      controlsFront.classList.add('hidden');
+      badgeFront.textContent = 'Vacío';
+      badgeFront.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+    } else {
+      fileBack.value = '';
+      emptyStateBack.classList.remove('hidden');
+      previewContainerBack.classList.add('hidden');
+      controlsBack.classList.add('hidden');
+      badgeBack.textContent = 'Vacío';
+      badgeBack.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+    }
+
+    updateCardRender(side);
+    updateDownloadButtonState();
+  }
+
+  // Configuración de Drag to Pan interactivo en canvas (Mouse y Touch con PointerEvents)
+  function setupPanInteractions(canvas: HTMLCanvasElement, side: 'front' | 'back') {
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    canvas.style.touchAction = 'none';
+
+    canvas.addEventListener('pointerdown', (e: PointerEvent) => {
+      const card = side === 'front' ? frontCard : backCard;
+      if (!card.imageElement) return;
+      e.stopPropagation();
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      try {
+        canvas.setPointerCapture(e.pointerId);
+      } catch (_) {}
+      canvas.style.cursor = 'grabbing';
+    });
+
+    canvas.addEventListener('pointermove', (e: PointerEvent) => {
+      if (!isDragging) return;
+      e.stopPropagation();
+      const card = side === 'front' ? frontCard : backCard;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      startX = e.clientX;
+      startY = e.clientY;
+
+      // Escalar movimiento según resolución nativa del canvas (1011px vs ancho display)
+      const scaleFactor = CARD_CONFIG.CANVAS_WIDTH_PX / (canvas.clientWidth || 200);
+      card.offsetX += dx * scaleFactor;
+      card.offsetY += dy * scaleFactor;
+      updateCardRender(side);
+    });
+
+    const stopDragging = (e: PointerEvent) => {
+      if (isDragging) {
+        isDragging = false;
+        try {
+          canvas.releasePointerCapture(e.pointerId);
+        } catch (_) {}
+        canvas.style.cursor = 'grab';
+      }
+    };
+
+    canvas.addEventListener('pointerup', stopDragging);
+    canvas.addEventListener('pointercancel', stopDragging);
+  }
+
+  // Activar arrastre en mini-canvases y en la vista previa de la hoja A4
+  setupPanInteractions(miniCanvasFront, 'front');
+  setupPanInteractions(miniCanvasBack, 'back');
+  setupPanInteractions(canvasPreviewFront, 'front');
+  setupPanInteractions(canvasPreviewBack, 'back');
+
+  // Listeners Frente
+  dropzoneFront.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('#controls-front') || (e.target as HTMLElement).closest('#preview-container-front')) return;
+    fileFront.click();
+  });
+
+  fileFront.addEventListener('change', (e) => {
+    const files = (e.target as HTMLInputElement).files;
+    if (files && files[0]) handleFileSelect(files[0], 'front');
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzoneFront.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzoneFront.classList.add('border-sky-400', 'bg-sky-500/10');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzoneFront.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzoneFront.classList.remove('border-sky-400', 'bg-sky-500/10');
+    });
+  });
+
+  dropzoneFront.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const dt = e.dataTransfer;
+    if (dt && dt.files && dt.files[0]) handleFileSelect(dt.files[0], 'front');
+  });
+
+  btnRotateFront.addEventListener('click', (e) => {
+    e.stopPropagation();
+    frontCard.rotation = (frontCard.rotation + 90) % 360;
+    updateCardRender('front');
+  });
+
+  btnResetFront.addEventListener('click', (e) => {
+    e.stopPropagation();
+    frontCard.zoom = 1.0;
+    frontCard.offsetX = 0;
+    frontCard.offsetY = 0;
+    zoomFront.value = '1';
+    zoomValFront.textContent = '100%';
+    updateCardRender('front');
+  });
+
+  zoomFront.addEventListener('input', (e) => {
+    const val = parseFloat((e.target as HTMLInputElement).value);
+    frontCard.zoom = val;
+    zoomValFront.textContent = `${Math.round(val * 100)}%`;
+    updateCardRender('front');
+  });
+
+  btnRemoveFront.addEventListener('click', (e) => {
+    e.stopPropagation();
+    handleRemoveFile('front');
+  });
+
+  // Listeners Dorso
+  dropzoneBack.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('#controls-back') || (e.target as HTMLElement).closest('#preview-container-back')) return;
+    fileBack.click();
+  });
+
+  fileBack.addEventListener('change', (e) => {
+    const files = (e.target as HTMLInputElement).files;
+    if (files && files[0]) handleFileSelect(files[0], 'back');
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzoneBack.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzoneBack.classList.add('border-indigo-400', 'bg-indigo-500/10');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzoneBack.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      dropzoneBack.classList.remove('border-indigo-400', 'bg-indigo-500/10');
+    });
+  });
+
+  dropzoneBack.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const dt = e.dataTransfer;
+    if (dt && dt.files && dt.files[0]) handleFileSelect(dt.files[0], 'back');
+  });
+
+  btnRotateBack.addEventListener('click', (e) => {
+    e.stopPropagation();
+    backCard.rotation = (backCard.rotation + 90) % 360;
+    updateCardRender('back');
+  });
+
+  btnResetBack.addEventListener('click', (e) => {
+    e.stopPropagation();
+    backCard.zoom = 1.0;
+    backCard.offsetX = 0;
+    backCard.offsetY = 0;
+    zoomBack.value = '1';
+    zoomValBack.textContent = '100%';
+    updateCardRender('back');
+  });
+
+  zoomBack.addEventListener('input', (e) => {
+    const val = parseFloat((e.target as HTMLInputElement).value);
+    backCard.zoom = val;
+    zoomValBack.textContent = `${Math.round(val * 100)}%`;
+    updateCardRender('back');
+  });
+
+  btnRemoveBack.addEventListener('click', (e) => {
+    e.stopPropagation();
+    handleRemoveFile('back');
+  });
+
+  // Modos de Color
+  colorModeButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      colorModeButtons.forEach(b => {
+        b.classList.remove('bg-sky-500/15', 'border-sky-500', 'text-white');
+        b.classList.add('border-slate-800', 'text-slate-300');
+      });
+
+      btn.classList.remove('border-slate-800', 'text-slate-300');
+      btn.classList.add('bg-sky-500/15', 'border-sky-500', 'text-white');
+
+      currentColorMode = (btn.getAttribute('data-mode') || 'original') as ColorMode;
+      updateCardRender('front');
+      updateCardRender('back');
+    });
+  });
+
+  // Descarga del PDF
+  btnDownload.addEventListener('click', async () => {
+    if (!frontCard.imageElement && !backCard.imageElement) return;
+
+    try {
+      const originalText = btnDownloadText.textContent;
+      btnDownload.disabled = true;
+      btnDownloadText.textContent = 'Generando PDF milimétrico a 300 DPI...';
+
+      await generateAndDownloadPdf({
+        frontCard,
+        backCard,
+        colorMode: currentColorMode
+      });
+
+      btnDownloadText.textContent = originalText;
+      btnDownload.disabled = false;
+    } catch (err) {
+      console.error('Error al generar PDF:', err);
+      alert('Ocurrió un error al generar el PDF. Por favor reintenta.');
+      btnDownload.disabled = false;
+      updateDownloadButtonState();
+    }
+  });
+</script>
