@@ -1,7 +1,7 @@
 # 🪪 CardPDF
 
 [![Web App](https://img.shields.io/badge/Web_App-cardpdf.pages.dev-38BDF8?style=flat-square&logo=cloudflarepages&logoColor=white)](https://cardpdf.pages.dev/)
-[![Astro](https://img.shields.io/badge/Astro-5.x-BC52EE?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
+[![Astro](https://img.shields.io/badge/Astro-7.x-BC52EE?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-11.x-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
@@ -146,7 +146,7 @@ Relevado a partir de un análisis interno del proyecto (seguridad, dependencias 
 
 ### 📦 Dependencias
 - [x] Verificado tras actualizar `jspdf` a `4.2.1`: `html2canvas` y `dompurify` siguen generando chunks separados en `dist/_astro/` (import dinámico interno de jsPDF para su método `.html()`, que no usamos), pero `dist/index.html` no los referencia ni precarga — el navegador nunca los descarga en tiempo de ejecución. No es peso muerto real para el usuario; solo archivos de más en el build.
-- [ ] Mantener Astro actualizado a la última versión estable (aunque las CVEs de SSR no aplican a este build 100% estático).
+- [x] Mantener Astro actualizado a la última versión estable (actualizado a `7.3.3`): `pnpm audit` pasó a 0 vulnerabilidades conocidas en todo el árbol de dependencias, y el tiempo de compilación estática se redujo a ~1.1s.
 
 ### 🧹 Calidad de código
 - [ ] Hacer que `tests/verify-specs.mjs` importe las constantes reales desde `src/utils/constants.ts` en lugar de duplicarlas a mano, para que el test detecte regresiones reales.
