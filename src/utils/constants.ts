@@ -30,10 +30,6 @@ export const CARD_CONFIG = {
   // Dorso ubicado verticalmente debajo con separación de 26.02 mm
   BACK_POS_Y_MM: 115.0,
 
-  // Grosor de borde de fotocopia (0.5 puntos en mm: 0.5 * 0.352778 ≈ 0.176 mm)
-  BORDER_STROKE_PT: 0.5,
-  BORDER_COLOR_HEX: '#cccccc',
-
   // Resolución de renderizado en Canvas (300 DPI para impresión nítida 100%)
   TARGET_DPI: 300,
   get MM_TO_PX() {

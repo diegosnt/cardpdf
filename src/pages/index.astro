@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CardPanel from '../components/CardPanel.astro';
 import { CARD_CONFIG } from '../utils/constants';
 ---
 
@@ -43,235 +44,18 @@ import { CARD_CONFIG } from '../utils/constants';
 
       <!-- Zonas de Carga: Frente y Dorso -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        
-        <!-- CARD: FRENTE -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-sm" id="box-front">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 text-xs font-bold flex items-center justify-center border border-sky-500/30">1</span>
-                <h2 class="font-bold text-xs text-slate-200 uppercase tracking-wider">Frente de la Tarjeta</h2>
-              </div>
-              <span id="badge-front" class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-                Vacío
-              </span>
-            </div>
-
-            <!-- Dropzone Frente -->
-            <div 
-              id="dropzone-front" 
-              class="relative border-2 border-dashed border-slate-700 hover:border-sky-500 hover:bg-sky-500/5 rounded-xl p-3 text-center cursor-pointer transition-all duration-200 group flex flex-col items-center justify-center min-h-[175px]"
-            >
-              <input type="file" id="file-front" accept="image/jpeg,image/png,image/webp" class="hidden" />
-              
-              <!-- Estado inicial sin foto -->
-              <div id="empty-state-front" class="space-y-2 pointer-events-none">
-                <div class="w-12 h-12 mx-auto rounded-full bg-slate-800 group-hover:bg-sky-500/20 text-slate-400 group-hover:text-sky-400 flex items-center justify-center transition-colors">
-                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div class="text-xs text-slate-300 font-medium">
-                  <span class="text-sky-400 underline">Elegir foto</span> o arrastrar
-                </div>
-                <p class="text-[10px] text-slate-500">JPG, PNG o WebP (máx. 20 MB)</p>
-              </div>
-
-              <!-- Vista interactiva con foto cargada -->
-              <div id="preview-container-front" class="hidden w-full flex flex-col items-center justify-center">
-                <div class="relative w-full aspect-[85.6/53.98] rounded-[6px] overflow-hidden shadow-md border border-slate-700 bg-slate-950 cursor-grab active:cursor-grabbing group/canvas">
-                  <canvas id="mini-canvas-front" class="w-full h-full object-cover block"></canvas>
-                  <div class="absolute bottom-1 right-1 bg-black/70 text-[9px] text-slate-300 px-1.5 py-0.5 rounded opacity-75 group-hover/canvas:opacity-100 pointer-events-none">
-                    Arrastra para centrar
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Herramientas rápidas Frente -->
-          <div id="controls-front" class="hidden mt-3 pt-3 border-t border-slate-800 space-y-2">
-            <!-- Barra de botones: Rotar, Recentrar, Eliminar -->
-            <div class="flex items-center gap-1.5 text-xs">
-              <button 
-                type="button" 
-                id="btn-rotate-front" 
-                class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg flex items-center justify-center gap-1 transition font-medium text-[11px]"
-                title="Girar 90° a la derecha"
-              >
-                <svg class="w-3.5 h-3.5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span>Girar 90°</span>
-              </button>
-
-              <button 
-                type="button" 
-                id="btn-reset-front" 
-                class="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition font-medium text-[11px]"
-                title="Restablecer posición y zoom"
-              >
-                Recentrar
-              </button>
-
-              <button 
-                type="button" 
-                id="btn-remove-front" 
-                class="py-1.5 px-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-medium text-[11px]"
-                title="Quitar foto"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Control de Zoom -->
-            <div class="flex items-center justify-between bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
-              <span class="text-[10px] text-slate-400 font-medium">Zoom</span>
-              <div class="flex items-center gap-1.5">
-                <button 
-                  type="button" 
-                  id="btn-zoom-out-front" 
-                  class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 active:bg-sky-600/30 text-slate-200 hover:text-sky-300 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none"
-                  title="Reducir zoom (-1%)"
-                  aria-label="Reducir zoom"
-                >
-                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4" />
-                  </svg>
-                </button>
-                <span id="zoom-val-front" class="text-[10px] font-mono text-slate-300 w-10 text-center select-none font-medium" title="Doble clic para restablecer al 100%">100%</span>
-                <button 
-                  type="button" 
-                  id="btn-zoom-in-front" 
-                  class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 active:bg-sky-600/30 text-slate-200 hover:text-sky-300 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none"
-                  title="Aumentar zoom (+1%)"
-                  aria-label="Aumentar zoom"
-                >
-                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CARD: DORSO -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-sm" id="box-back">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold flex items-center justify-center border border-indigo-500/30">2</span>
-                <h2 class="font-bold text-xs text-slate-200 uppercase tracking-wider">Dorso de la Tarjeta</h2>
-              </div>
-              <span id="badge-back" class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-                Vacío
-              </span>
-            </div>
-
-            <!-- Dropzone Dorso -->
-            <div 
-              id="dropzone-back" 
-              class="relative border-2 border-dashed border-slate-700 hover:border-indigo-500 hover:bg-indigo-500/5 rounded-xl p-3 text-center cursor-pointer transition-all duration-200 group flex flex-col items-center justify-center min-h-[175px]"
-            >
-              <input type="file" id="file-back" accept="image/jpeg,image/png,image/webp" class="hidden" />
-              
-              <!-- Estado inicial sin foto -->
-              <div id="empty-state-back" class="space-y-2 pointer-events-none">
-                <div class="w-12 h-12 mx-auto rounded-full bg-slate-800 group-hover:bg-indigo-500/20 text-slate-400 group-hover:text-indigo-400 flex items-center justify-center transition-colors">
-                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div class="text-xs text-slate-300 font-medium">
-                  <span class="text-indigo-400 underline">Elegir foto</span> o arrastrar
-                </div>
-                <p class="text-[10px] text-slate-500">JPG, PNG o WebP (máx. 20 MB)</p>
-              </div>
-
-              <!-- Vista interactiva con foto cargada -->
-              <div id="preview-container-back" class="hidden w-full flex flex-col items-center justify-center">
-                <div class="relative w-full aspect-[85.6/53.98] rounded-[6px] overflow-hidden shadow-md border border-slate-700 bg-slate-950 cursor-grab active:cursor-grabbing group/canvas">
-                  <canvas id="mini-canvas-back" class="w-full h-full object-cover block"></canvas>
-                  <div class="absolute bottom-1 right-1 bg-black/70 text-[9px] text-slate-300 px-1.5 py-0.5 rounded opacity-75 group-hover/canvas:opacity-100 pointer-events-none">
-                    Arrastra para centrar
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Herramientas rápidas Dorso -->
-          <div id="controls-back" class="hidden mt-3 pt-3 border-t border-slate-800 space-y-2">
-            <!-- Barra de botones: Rotar, Recentrar, Eliminar -->
-            <div class="flex items-center gap-1.5 text-xs">
-              <button 
-                type="button" 
-                id="btn-rotate-back" 
-                class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg flex items-center justify-center gap-1 transition font-medium text-[11px]"
-                title="Girar 90° a la derecha"
-              >
-                <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span>Girar 90°</span>
-              </button>
-
-              <button 
-                type="button" 
-                id="btn-reset-back" 
-                class="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition font-medium text-[11px]"
-                title="Restablecer posición y zoom"
-              >
-                Recentrar
-              </button>
-
-              <button 
-                type="button" 
-                id="btn-remove-back" 
-                class="py-1.5 px-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-medium text-[11px]"
-                title="Quitar foto"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Control de Zoom -->
-            <div class="flex items-center justify-between bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
-              <span class="text-[10px] text-slate-400 font-medium">Zoom</span>
-              <div class="flex items-center gap-1.5">
-                <button 
-                  type="button" 
-                  id="btn-zoom-out-back" 
-                  class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 active:bg-indigo-600/30 text-slate-200 hover:text-indigo-300 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none"
-                  title="Reducir zoom (-1%)"
-                  aria-label="Reducir zoom"
-                >
-                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4" />
-                  </svg>
-                </button>
-                <span id="zoom-val-back" class="text-[10px] font-mono text-slate-300 w-10 text-center select-none font-medium" title="Doble clic para restablecer al 100%">100%</span>
-                <button 
-                  type="button" 
-                  id="btn-zoom-in-back" 
-                  class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 active:bg-indigo-600/30 text-slate-200 hover:text-indigo-300 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none"
-                  title="Aumentar zoom (+1%)"
-                  aria-label="Aumentar zoom"
-                >
-                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <CardPanel
+          side="front"
+          stepNumber={1}
+          title="Frente de la Tarjeta"
+          accentColor="sky"
+        />
+        <CardPanel
+          side="back"
+          stepNumber={2}
+          title="Dorso de la Tarjeta"
+          accentColor="indigo"
+        />
       </div>
 
       <!-- Configuración de Estilo y Opciones de Impresión -->
@@ -444,68 +228,85 @@ import { CARD_CONFIG } from '../utils/constants';
   import { generateAndDownloadPdf } from '../utils/pdfGenerator';
   import { CARD_CONFIG, FILE_LIMITS, type ColorMode } from '../utils/constants';
 
-  // Estados de las tarjetas
-  const frontCard: CardState = {
-    file: null,
-    imageElement: null,
-    rotation: 0,
-    zoom: 1.0,
-    offsetX: 0,
-    offsetY: 0
+  type CardSide = 'front' | 'back';
+
+  interface SideConfig {
+    accentColor: 'sky' | 'indigo';
+    dragActiveClasses: string[];
+    badgeActiveClass: string;
+  }
+
+  const SIDE_CONFIG: Record<CardSide, SideConfig> = {
+    front: {
+      accentColor: 'sky',
+      dragActiveClasses: ['border-sky-400', 'bg-sky-500/10'],
+      badgeActiveClass: 'bg-sky-500/20 text-sky-400 border-sky-500/30',
+    },
+    back: {
+      accentColor: 'indigo',
+      dragActiveClasses: ['border-indigo-400', 'bg-indigo-500/10'],
+      badgeActiveClass: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
+    },
   };
 
-  const backCard: CardState = {
-    file: null,
-    imageElement: null,
-    rotation: 0,
-    zoom: 1.0,
-    offsetX: 0,
-    offsetY: 0
+  interface SideElements {
+    dropzone: HTMLElement;
+    fileInput: HTMLInputElement;
+    emptyState: HTMLElement;
+    previewContainer: HTMLElement;
+    miniCanvas: HTMLCanvasElement;
+    controls: HTMLElement;
+    btnRotate: HTMLButtonElement;
+    btnReset: HTMLButtonElement;
+    btnRemove: HTMLButtonElement;
+    btnZoomOut: HTMLButtonElement;
+    btnZoomIn: HTMLButtonElement;
+    zoomVal: HTMLElement;
+    badge: HTMLElement;
+    canvasPreview: HTMLCanvasElement;
+    placeholderPreview: HTMLElement;
+    sheetCard: HTMLElement;
+  }
+
+  function getSideElements(side: CardSide): SideElements {
+    return {
+      dropzone: document.getElementById(`dropzone-${side}`) as HTMLElement,
+      fileInput: document.getElementById(`file-${side}`) as HTMLInputElement,
+      emptyState: document.getElementById(`empty-state-${side}`) as HTMLElement,
+      previewContainer: document.getElementById(`preview-container-${side}`) as HTMLElement,
+      miniCanvas: document.getElementById(`mini-canvas-${side}`) as HTMLCanvasElement,
+      controls: document.getElementById(`controls-${side}`) as HTMLElement,
+      btnRotate: document.getElementById(`btn-rotate-${side}`) as HTMLButtonElement,
+      btnReset: document.getElementById(`btn-reset-${side}`) as HTMLButtonElement,
+      btnRemove: document.getElementById(`btn-remove-${side}`) as HTMLButtonElement,
+      btnZoomOut: document.getElementById(`btn-zoom-out-${side}`) as HTMLButtonElement,
+      btnZoomIn: document.getElementById(`btn-zoom-in-${side}`) as HTMLButtonElement,
+      zoomVal: document.getElementById(`zoom-val-${side}`) as HTMLElement,
+      badge: document.getElementById(`badge-${side}`) as HTMLElement,
+      canvasPreview: document.getElementById(`canvas-preview-${side}`) as HTMLCanvasElement,
+      placeholderPreview: document.getElementById(`placeholder-preview-${side}`) as HTMLElement,
+      sheetCard: document.getElementById(`sheet-card-${side}`) as HTMLElement,
+    };
+  }
+
+  // Estados de las tarjetas
+  const cards: Record<CardSide, CardState> = {
+    front: { file: null, imageElement: null, rotation: 0, zoom: 1.0, offsetX: 0, offsetY: 0 },
+    back: { file: null, imageElement: null, rotation: 0, zoom: 1.0, offsetX: 0, offsetY: 0 },
+  };
+
+  // Elementos del DOM agrupados por cara
+  const elements: Record<CardSide, SideElements> = {
+    front: getSideElements('front'),
+    back: getSideElements('back'),
   };
 
   let currentColorMode: ColorMode = 'original';
-  let includeBorder: boolean = true;
 
   // Parámetros de Zoom (1% por paso para ajuste fino sin saltos de 5 en 5)
   const MIN_ZOOM = 0.5; // 50%
   const MAX_ZOOM = 3.0; // 300%
   const ZOOM_STEP = 0.01; // 1%
-
-  // DOM Elements - Frente
-  const dropzoneFront = document.getElementById('dropzone-front') as HTMLElement;
-  const fileFront = document.getElementById('file-front') as HTMLInputElement;
-  const emptyStateFront = document.getElementById('empty-state-front') as HTMLElement;
-  const previewContainerFront = document.getElementById('preview-container-front') as HTMLElement;
-  const miniCanvasFront = document.getElementById('mini-canvas-front') as HTMLCanvasElement;
-  const controlsFront = document.getElementById('controls-front') as HTMLElement;
-  const btnRotateFront = document.getElementById('btn-rotate-front') as HTMLButtonElement;
-  const btnResetFront = document.getElementById('btn-reset-front') as HTMLButtonElement;
-  const btnRemoveFront = document.getElementById('btn-remove-front') as HTMLButtonElement;
-  const btnZoomOutFront = document.getElementById('btn-zoom-out-front') as HTMLButtonElement;
-  const btnZoomInFront = document.getElementById('btn-zoom-in-front') as HTMLButtonElement;
-  const zoomValFront = document.getElementById('zoom-val-front') as HTMLElement;
-  const badgeFront = document.getElementById('badge-front') as HTMLElement;
-  const canvasPreviewFront = document.getElementById('canvas-preview-front') as HTMLCanvasElement;
-  const placeholderPreviewFront = document.getElementById('placeholder-preview-front') as HTMLElement;
-  const sheetCardFront = document.getElementById('sheet-card-front') as HTMLElement;
-
-  // DOM Elements - Dorso
-  const dropzoneBack = document.getElementById('dropzone-back') as HTMLElement;
-  const fileBack = document.getElementById('file-back') as HTMLInputElement;
-  const emptyStateBack = document.getElementById('empty-state-back') as HTMLElement;
-  const previewContainerBack = document.getElementById('preview-container-back') as HTMLElement;
-  const miniCanvasBack = document.getElementById('mini-canvas-back') as HTMLCanvasElement;
-  const controlsBack = document.getElementById('controls-back') as HTMLElement;
-  const btnRotateBack = document.getElementById('btn-rotate-back') as HTMLButtonElement;
-  const btnResetBack = document.getElementById('btn-reset-back') as HTMLButtonElement;
-  const btnRemoveBack = document.getElementById('btn-remove-back') as HTMLButtonElement;
-  const btnZoomOutBack = document.getElementById('btn-zoom-out-back') as HTMLButtonElement;
-  const btnZoomInBack = document.getElementById('btn-zoom-in-back') as HTMLButtonElement;
-  const zoomValBack = document.getElementById('zoom-val-back') as HTMLElement;
-  const badgeBack = document.getElementById('badge-back') as HTMLElement;
-  const canvasPreviewBack = document.getElementById('canvas-preview-back') as HTMLCanvasElement;
-  const placeholderPreviewBack = document.getElementById('placeholder-preview-back') as HTMLElement;
-  const sheetCardBack = document.getElementById('sheet-card-back') as HTMLElement;
 
   // Elementos Globales
   const btnDownload = document.getElementById('btn-download-pdf') as HTMLButtonElement;
@@ -513,58 +314,55 @@ import { CARD_CONFIG } from '../utils/constants';
   const colorModeButtons = document.querySelectorAll<HTMLButtonElement>('.color-mode-btn');
 
   // Actualiza el renderizado Canvas
-  async function updateCardRender(side: 'front' | 'back') {
-    const card = side === 'front' ? frontCard : backCard;
-    const miniCanvas = side === 'front' ? miniCanvasFront : miniCanvasBack;
-    const previewCanvas = side === 'front' ? canvasPreviewFront : canvasPreviewBack;
-    const placeholder = side === 'front' ? placeholderPreviewFront : placeholderPreviewBack;
-    const sheetContainer = side === 'front' ? sheetCardFront : sheetCardBack;
+  async function updateCardRender(side: CardSide) {
+    const card = cards[side];
+    const el = elements[side];
 
     if (!card.imageElement) {
-      previewCanvas.classList.add('hidden');
-      placeholder.classList.remove('hidden');
-      sheetContainer.classList.remove('border-none');
-      sheetContainer.classList.add('border-dashed', 'border-slate-300');
+      el.canvasPreview.classList.add('hidden');
+      el.placeholderPreview.classList.remove('hidden');
+      el.sheetCard.classList.remove('border-none');
+      el.sheetCard.classList.add('border-dashed', 'border-slate-300');
       return;
     }
 
     try {
       // Sin marcos ni líneas grises añadidas
-      const renderedCanvas = await renderCardToCanvas(card, currentColorMode, false);
+      const renderedCanvas = await renderCardToCanvas(card, currentColorMode);
 
       // Miniatura en Dropzone
-      miniCanvas.width = renderedCanvas.width;
-      miniCanvas.height = renderedCanvas.height;
-      const miniCtx = miniCanvas.getContext('2d');
+      el.miniCanvas.width = renderedCanvas.width;
+      el.miniCanvas.height = renderedCanvas.height;
+      const miniCtx = el.miniCanvas.getContext('2d');
       miniCtx?.drawImage(renderedCanvas, 0, 0);
 
       // Canvas en Hoja A4
-      previewCanvas.width = renderedCanvas.width;
-      previewCanvas.height = renderedCanvas.height;
-      const prevCtx = previewCanvas.getContext('2d');
+      el.canvasPreview.width = renderedCanvas.width;
+      el.canvasPreview.height = renderedCanvas.height;
+      const prevCtx = el.canvasPreview.getContext('2d');
       prevCtx?.drawImage(renderedCanvas, 0, 0);
 
-      previewCanvas.classList.remove('hidden');
-      placeholder.classList.add('hidden');
-      sheetContainer.classList.remove('border-dashed', 'border-slate-300', 'border-solid', 'border-slate-400');
-      sheetContainer.classList.add('border-none');
+      el.canvasPreview.classList.remove('hidden');
+      el.placeholderPreview.classList.add('hidden');
+      el.sheetCard.classList.remove('border-dashed', 'border-slate-300', 'border-solid', 'border-slate-400');
+      el.sheetCard.classList.add('border-none');
     } catch (err) {
       console.error(`Error al procesar ${side}:`, err);
     }
   }
 
-  // Actualiza estado de descarga
+  // Actualiza estado del botón de descarga
   function updateDownloadButtonState() {
-    const hasAnyImage = frontCard.imageElement !== null || backCard.imageElement !== null;
-    const hasBothImages = frontCard.imageElement !== null && backCard.imageElement !== null;
+    const hasAnyImage = cards.front.imageElement !== null || cards.back.imageElement !== null;
+    const hasBothImages = cards.front.imageElement !== null && cards.back.imageElement !== null;
 
     btnDownload.disabled = !hasAnyImage;
 
     if (hasBothImages) {
       btnDownloadText.textContent = 'Descargar Fotocopia PDF (Frente y Dorso)';
-    } else if (frontCard.imageElement !== null) {
+    } else if (cards.front.imageElement !== null) {
       btnDownloadText.textContent = 'Descargar Fotocopia PDF (Solo Frente)';
-    } else if (backCard.imageElement !== null) {
+    } else if (cards.back.imageElement !== null) {
       btnDownloadText.textContent = 'Descargar Fotocopia PDF (Solo Dorso)';
     } else {
       btnDownloadText.textContent = 'Descargar Fotocopia PDF (A4 - 100%)';
@@ -572,26 +370,24 @@ import { CARD_CONFIG } from '../utils/constants';
   }
 
   // Actualiza visualización y estado de los botones de zoom
-  function updateZoomDisplay(side: 'front' | 'back') {
-    const card = side === 'front' ? frontCard : backCard;
-    const zoomVal = side === 'front' ? zoomValFront : zoomValBack;
-    const btnOut = side === 'front' ? btnZoomOutFront : btnZoomOutBack;
-    const btnIn = side === 'front' ? btnZoomInFront : btnZoomInBack;
+  function updateZoomDisplay(side: CardSide) {
+    const card = cards[side];
+    const el = elements[side];
 
-    if (zoomVal) {
-      zoomVal.textContent = `${Math.round(card.zoom * 100)}%`;
+    if (el.zoomVal) {
+      el.zoomVal.textContent = `${Math.round(card.zoom * 100)}%`;
     }
-    if (btnOut) {
-      btnOut.disabled = card.zoom <= MIN_ZOOM + 0.0001;
+    if (el.btnZoomOut) {
+      el.btnZoomOut.disabled = card.zoom <= MIN_ZOOM + 0.0001;
     }
-    if (btnIn) {
-      btnIn.disabled = card.zoom >= MAX_ZOOM - 0.0001;
+    if (el.btnZoomIn) {
+      el.btnZoomIn.disabled = card.zoom >= MAX_ZOOM - 0.0001;
     }
   }
 
   // Ajusta el zoom en pasos de 1% (ZOOM_STEP = 0.01) sin saltos grandes
-  function adjustZoom(side: 'front' | 'back', delta: number) {
-    const card = side === 'front' ? frontCard : backCard;
+  function adjustZoom(side: CardSide, delta: number) {
+    const card = cards[side];
     if (!card.imageElement) return;
 
     const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round((card.zoom + delta) * 100) / 100));
@@ -603,11 +399,9 @@ import { CARD_CONFIG } from '../utils/constants';
   }
 
   // Configura los botones - y + con soporte para clic rápido y pulsación continua
-  function setupZoomControls(side: 'front' | 'back') {
-    const isFront = side === 'front';
-    const btnOut = isFront ? btnZoomOutFront : btnZoomOutBack;
-    const btnIn = isFront ? btnZoomInFront : btnZoomInBack;
-    const zoomVal = isFront ? zoomValFront : zoomValBack;
+  function setupZoomControls(side: CardSide) {
+    const el = elements[side];
+    const card = cards[side];
 
     const attachHoldListener = (btn: HTMLButtonElement, delta: number) => {
       let timeoutId: number | null = null;
@@ -654,13 +448,12 @@ import { CARD_CONFIG } from '../utils/constants';
       });
     };
 
-    attachHoldListener(btnOut, -ZOOM_STEP);
-    attachHoldListener(btnIn, ZOOM_STEP);
+    attachHoldListener(el.btnZoomOut, -ZOOM_STEP);
+    attachHoldListener(el.btnZoomIn, ZOOM_STEP);
 
     // Doble clic en el indicador para restablecer rápidamente al 100%
-    zoomVal.addEventListener('dblclick', (e) => {
+    el.zoomVal.addEventListener('dblclick', (e) => {
       e.stopPropagation();
-      const card = isFront ? frontCard : backCard;
       if (!card.imageElement) return;
       card.zoom = 1.0;
       updateZoomDisplay(side);
@@ -668,13 +461,37 @@ import { CARD_CONFIG } from '../utils/constants';
     });
   }
 
+  // Actualiza el estado visual de la tarjeta (Vacío o Listo)
+  function setCardUiState(side: CardSide, state: 'empty' | 'ready') {
+    const el = elements[side];
+    const config = SIDE_CONFIG[side];
+
+    if (state === 'ready') {
+      updateZoomDisplay(side);
+      el.emptyState.classList.add('hidden');
+      el.previewContainer.classList.remove('hidden');
+      el.controls.classList.remove('hidden');
+      el.badge.textContent = 'Listo';
+      el.badge.className = `text-[10px] font-medium px-2 py-0.5 rounded-full border ${config.badgeActiveClass}`;
+    } else {
+      el.fileInput.value = '';
+      updateZoomDisplay(side);
+      el.emptyState.classList.remove('hidden');
+      el.previewContainer.classList.add('hidden');
+      el.controls.classList.add('hidden');
+      el.badge.textContent = 'Vacío';
+      el.badge.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
+    }
+  }
+
   // Manejador de selección de imagen
-  async function handleFileSelect(file: File, side: 'front' | 'back') {
+  async function handleFileSelect(file: File, side: CardSide) {
+    const el = elements[side];
+
     // Validación previa de tipo MIME
     if (!file.type.startsWith('image/')) {
       alert('El archivo seleccionado no es una imagen válida. Por favor selecciona un archivo JPG, PNG o WebP.');
-      if (side === 'front') fileFront.value = '';
-      else fileBack.value = '';
+      el.fileInput.value = '';
       return;
     }
 
@@ -682,14 +499,13 @@ import { CARD_CONFIG } from '../utils/constants';
     if (file.size > FILE_LIMITS.MAX_FILE_SIZE_BYTES) {
       const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
       alert(`La imagen seleccionada es demasiado pesada (${sizeMb} MB). El tamaño máximo permitido es de ${FILE_LIMITS.MAX_FILE_SIZE_MB} MB para evitar que el navegador se cuelgue al procesarla a 300 DPI.`);
-      if (side === 'front') fileFront.value = '';
-      else fileBack.value = '';
+      el.fileInput.value = '';
       return;
     }
 
     try {
       const img = await loadFileAsImage(file);
-      const card = side === 'front' ? frontCard : backCard;
+      const card = cards[side];
       card.file = file;
       card.imageElement = img;
       card.rotation = 0;
@@ -697,34 +513,18 @@ import { CARD_CONFIG } from '../utils/constants';
       card.offsetX = 0;
       card.offsetY = 0;
 
-      if (side === 'front') {
-        updateZoomDisplay('front');
-        emptyStateFront.classList.add('hidden');
-        previewContainerFront.classList.remove('hidden');
-        controlsFront.classList.remove('hidden');
-        badgeFront.textContent = 'Listo';
-        badgeFront.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30';
-      } else {
-        updateZoomDisplay('back');
-        emptyStateBack.classList.add('hidden');
-        previewContainerBack.classList.remove('hidden');
-        controlsBack.classList.remove('hidden');
-        badgeBack.textContent = 'Listo';
-        badgeBack.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30';
-      }
-
+      setCardUiState(side, 'ready');
       await updateCardRender(side);
       updateDownloadButtonState();
     } catch (err) {
       alert((err as Error).message || 'Error al cargar la imagen');
-      if (side === 'front') fileFront.value = '';
-      else fileBack.value = '';
+      el.fileInput.value = '';
     }
   }
 
   // Quitar imagen
-  function handleRemoveFile(side: 'front' | 'back') {
-    const card = side === 'front' ? frontCard : backCard;
+  function handleRemoveFile(side: CardSide) {
+    const card = cards[side];
     card.file = null;
     card.imageElement = null;
     card.rotation = 0;
@@ -732,30 +532,13 @@ import { CARD_CONFIG } from '../utils/constants';
     card.offsetX = 0;
     card.offsetY = 0;
 
-    if (side === 'front') {
-      fileFront.value = '';
-      updateZoomDisplay('front');
-      emptyStateFront.classList.remove('hidden');
-      previewContainerFront.classList.add('hidden');
-      controlsFront.classList.add('hidden');
-      badgeFront.textContent = 'Vacío';
-      badgeFront.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
-    } else {
-      fileBack.value = '';
-      updateZoomDisplay('back');
-      emptyStateBack.classList.remove('hidden');
-      previewContainerBack.classList.add('hidden');
-      controlsBack.classList.add('hidden');
-      badgeBack.textContent = 'Vacío';
-      badgeBack.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
-    }
-
+    setCardUiState(side, 'empty');
     updateCardRender(side);
     updateDownloadButtonState();
   }
 
   // Configuración de Drag to Pan interactivo en canvas (Mouse y Touch con PointerEvents)
-  function setupPanInteractions(canvas: HTMLCanvasElement, side: 'front' | 'back') {
+  function setupPanInteractions(canvas: HTMLCanvasElement, side: CardSide) {
     let isDragging = false;
     let startX = 0;
     let startY = 0;
@@ -763,7 +546,7 @@ import { CARD_CONFIG } from '../utils/constants';
     canvas.style.touchAction = 'none';
 
     canvas.addEventListener('pointerdown', (e: PointerEvent) => {
-      const card = side === 'front' ? frontCard : backCard;
+      const card = cards[side];
       if (!card.imageElement) return;
       e.stopPropagation();
       isDragging = true;
@@ -778,7 +561,7 @@ import { CARD_CONFIG } from '../utils/constants';
     canvas.addEventListener('pointermove', (e: PointerEvent) => {
       if (!isDragging) return;
       e.stopPropagation();
-      const card = side === 'front' ? frontCard : backCard;
+      const card = cards[side];
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
       startX = e.clientX;
@@ -805,117 +588,76 @@ import { CARD_CONFIG } from '../utils/constants';
     canvas.addEventListener('pointercancel', stopDragging);
   }
 
-  // Activar arrastre en mini-canvases y en la vista previa de la hoja A4
-  setupPanInteractions(miniCanvasFront, 'front');
-  setupPanInteractions(miniCanvasBack, 'back');
-  setupPanInteractions(canvasPreviewFront, 'front');
-  setupPanInteractions(canvasPreviewBack, 'back');
+  // Vinculación de eventos por cara
+  function setupSideListeners(side: CardSide) {
+    const el = elements[side];
+    const card = cards[side];
+    const config = SIDE_CONFIG[side];
 
-  // Activar controles de zoom (- y +)
-  setupZoomControls('front');
-  setupZoomControls('back');
+    // Activar arrastre en mini-canvas y en la hoja A4
+    setupPanInteractions(el.miniCanvas, side);
+    setupPanInteractions(el.canvasPreview, side);
 
-  // Listeners Frente
-  dropzoneFront.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('#controls-front') || (e.target as HTMLElement).closest('#preview-container-front')) return;
-    fileFront.click();
-  });
+    // Activar controles de zoom (- y +)
+    setupZoomControls(side);
 
-  fileFront.addEventListener('change', (e) => {
-    const files = (e.target as HTMLInputElement).files;
-    if (files && files[0]) handleFileSelect(files[0], 'front');
-  });
-
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropzoneFront.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      dropzoneFront.classList.add('border-sky-400', 'bg-sky-500/10');
+    // Click en dropzone para abrir selector de archivo
+    el.dropzone.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest(`#controls-${side}`) || (e.target as HTMLElement).closest(`#preview-container-${side}`)) return;
+      el.fileInput.click();
     });
-  });
 
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropzoneFront.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      dropzoneFront.classList.remove('border-sky-400', 'bg-sky-500/10');
+    // Selección de archivo
+    el.fileInput.addEventListener('change', (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files[0]) handleFileSelect(files[0], side);
     });
-  });
 
-  dropzoneFront.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const dt = e.dataTransfer;
-    if (dt && dt.files && dt.files[0]) handleFileSelect(dt.files[0], 'front');
-  });
-
-  btnRotateFront.addEventListener('click', (e) => {
-    e.stopPropagation();
-    frontCard.rotation = (frontCard.rotation + 90) % 360;
-    updateCardRender('front');
-  });
-
-  btnResetFront.addEventListener('click', (e) => {
-    e.stopPropagation();
-    frontCard.zoom = 1.0;
-    frontCard.offsetX = 0;
-    frontCard.offsetY = 0;
-    updateZoomDisplay('front');
-    updateCardRender('front');
-  });
-
-  btnRemoveFront.addEventListener('click', (e) => {
-    e.stopPropagation();
-    handleRemoveFile('front');
-  });
-
-  // Listeners Dorso
-  dropzoneBack.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('#controls-back') || (e.target as HTMLElement).closest('#preview-container-back')) return;
-    fileBack.click();
-  });
-
-  fileBack.addEventListener('change', (e) => {
-    const files = (e.target as HTMLInputElement).files;
-    if (files && files[0]) handleFileSelect(files[0], 'back');
-  });
-
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropzoneBack.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      dropzoneBack.classList.add('border-indigo-400', 'bg-indigo-500/10');
+    // Arrastrar archivo sobre el dropzone
+    ['dragenter', 'dragover'].forEach(eventName => {
+      el.dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        el.dropzone.classList.add(...config.dragActiveClasses);
+      });
     });
-  });
 
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropzoneBack.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      dropzoneBack.classList.remove('border-indigo-400', 'bg-indigo-500/10');
+    ['dragleave', 'drop'].forEach(eventName => {
+      el.dropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        el.dropzone.classList.remove(...config.dragActiveClasses);
+      });
     });
-  });
 
-  dropzoneBack.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const dt = e.dataTransfer;
-    if (dt && dt.files && dt.files[0]) handleFileSelect(dt.files[0], 'back');
-  });
+    el.dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const dt = e.dataTransfer;
+      if (dt && dt.files && dt.files[0]) handleFileSelect(dt.files[0], side);
+    });
 
-  btnRotateBack.addEventListener('click', (e) => {
-    e.stopPropagation();
-    backCard.rotation = (backCard.rotation + 90) % 360;
-    updateCardRender('back');
-  });
+    // Botones de acción rápida
+    el.btnRotate.addEventListener('click', (e) => {
+      e.stopPropagation();
+      card.rotation = (card.rotation + 90) % 360;
+      updateCardRender(side);
+    });
 
-  btnResetBack.addEventListener('click', (e) => {
-    e.stopPropagation();
-    backCard.zoom = 1.0;
-    backCard.offsetX = 0;
-    backCard.offsetY = 0;
-    updateZoomDisplay('back');
-    updateCardRender('back');
-  });
+    el.btnReset.addEventListener('click', (e) => {
+      e.stopPropagation();
+      card.zoom = 1.0;
+      card.offsetX = 0;
+      card.offsetY = 0;
+      updateZoomDisplay(side);
+      updateCardRender(side);
+    });
 
-  btnRemoveBack.addEventListener('click', (e) => {
-    e.stopPropagation();
-    handleRemoveFile('back');
-  });
+    el.btnRemove.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleRemoveFile(side);
+    });
+  }
+
+  // Inicializar ambas caras
+  (['front', 'back'] as const).forEach(setupSideListeners);
 
   // Modos de Color
   colorModeButtons.forEach((btn) => {
@@ -936,7 +678,7 @@ import { CARD_CONFIG } from '../utils/constants';
 
   // Descarga del PDF
   btnDownload.addEventListener('click', async () => {
-    if (!frontCard.imageElement && !backCard.imageElement) return;
+    if (!cards.front.imageElement && !cards.back.imageElement) return;
 
     try {
       const originalText = btnDownloadText.textContent;
@@ -944,8 +686,8 @@ import { CARD_CONFIG } from '../utils/constants';
       btnDownloadText.textContent = 'Generando PDF milimétrico a 300 DPI...';
 
       await generateAndDownloadPdf({
-        frontCard,
-        backCard,
+        frontCard: cards.front,
+        backCard: cards.back,
         colorMode: currentColorMode
       });
 

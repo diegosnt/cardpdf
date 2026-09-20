@@ -6,7 +6,6 @@ export interface GeneratePdfOptions {
   frontCard: CardState;
   backCard: CardState;
   colorMode: ColorMode;
-  includeBorder?: boolean;
 }
 
 /**
@@ -28,7 +27,7 @@ export function formatTimestamp(date: Date = new Date()): string {
  * en tamaño real (100% escala: 85.60 × 53.98 mm) y dispara la descarga directa en el navegador.
  */
 export async function generateAndDownloadPdf(options: GeneratePdfOptions): Promise<string> {
-  const { frontCard, backCard, colorMode, includeBorder = true } = options;
+  const { frontCard, backCard, colorMode } = options;
 
   if (!frontCard.imageElement && !backCard.imageElement) {
     throw new Error('Debes cargar al menos una de las caras del documento (Frente o Dorso).');
@@ -53,12 +52,10 @@ export async function generateAndDownloadPdf(options: GeneratePdfOptions): Promi
   const x = CARD_CONFIG.POS_X_MM;
   const w = CARD_CONFIG.WIDTH_MM;
   const h = CARD_CONFIG.HEIGHT_MM;
-  const r = CARD_CONFIG.CORNER_RADIUS_MM;
-  const strokeWidthMm = (CARD_CONFIG.BORDER_STROKE_PT * 25.4) / 72; // ~0.176 mm
 
   // Procesar Frente si existe imagen (sin marcos ni líneas añadidas)
   if (frontCard.imageElement) {
-    const frontCanvas = await renderCardToCanvas(frontCard, colorMode, false);
+    const frontCanvas = await renderCardToCanvas(frontCard, colorMode);
     const frontData = frontCanvas.toDataURL('image/jpeg', 0.98);
     const frontY = CARD_CONFIG.FRONT_POS_Y_MM;
 
@@ -67,7 +64,7 @@ export async function generateAndDownloadPdf(options: GeneratePdfOptions): Promi
 
   // Procesar Dorso si existe imagen (sin marcos ni líneas añadidas)
   if (backCard.imageElement) {
-    const backCanvas = await renderCardToCanvas(backCard, colorMode, false);
+    const backCanvas = await renderCardToCanvas(backCard, colorMode);
     const backData = backCanvas.toDataURL('image/jpeg', 0.98);
     const backY = CARD_CONFIG.BACK_POS_Y_MM;
 

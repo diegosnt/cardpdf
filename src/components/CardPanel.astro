@@ -1,0 +1,146 @@
+---
+interface Props {
+  side: 'front' | 'back';
+  stepNumber: number;
+  title: string;
+  accentColor: 'sky' | 'indigo';
+}
+
+const { side, stepNumber, title, accentColor } = Astro.props;
+
+const THEMES = {
+  sky: {
+    badge: 'bg-sky-500/20 text-sky-400 border-sky-500/30',
+    dropzoneHover: 'hover:border-sky-500 hover:bg-sky-500/5',
+    emptyIconHover: 'group-hover:bg-sky-500/20 group-hover:text-sky-400',
+    chooseText: 'text-sky-400',
+    rotateIcon: 'text-sky-400',
+    zoomActive: 'active:bg-sky-600/30 hover:text-sky-300',
+  },
+  indigo: {
+    badge: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
+    dropzoneHover: 'hover:border-indigo-500 hover:bg-indigo-500/5',
+    emptyIconHover: 'group-hover:bg-indigo-500/20 group-hover:text-indigo-400',
+    chooseText: 'text-indigo-400',
+    rotateIcon: 'text-indigo-400',
+    zoomActive: 'active:bg-indigo-600/30 hover:text-indigo-300',
+  },
+} as const;
+
+const theme = THEMES[accentColor];
+---
+
+<div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between transition-all hover:border-slate-700 shadow-sm" id={`box-${side}`}>
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2">
+        <span class={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center border ${theme.badge}`}>
+          {stepNumber}
+        </span>
+        <h2 class="font-bold text-xs text-slate-200 uppercase tracking-wider">{title}</h2>
+      </div>
+      <span id={`badge-${side}`} class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+        Vacío
+      </span>
+    </div>
+
+    <!-- Dropzone -->
+    <div 
+      id={`dropzone-${side}`} 
+      class={`relative border-2 border-dashed border-slate-700 ${theme.dropzoneHover} rounded-xl p-3 text-center cursor-pointer transition-all duration-200 group flex flex-col items-center justify-center min-h-[175px]`}
+    >
+      <input type="file" id={`file-${side}`} accept="image/jpeg,image/png,image/webp" class="hidden" />
+      
+      <!-- Estado inicial sin foto -->
+      <div id={`empty-state-${side}`} class="space-y-2 pointer-events-none">
+        <div class={`w-12 h-12 mx-auto rounded-full bg-slate-800 ${theme.emptyIconHover} text-slate-400 flex items-center justify-center transition-colors`}>
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div class="text-xs text-slate-300 font-medium">
+          <span class={`${theme.chooseText} underline`}>Elegir foto</span> o arrastrar
+        </div>
+        <p class="text-[10px] text-slate-500">JPG, PNG o WebP (máx. 20 MB)</p>
+      </div>
+
+      <!-- Vista interactiva con foto cargada -->
+      <div id={`preview-container-${side}`} class="hidden w-full flex flex-col items-center justify-center">
+        <div class="relative w-full aspect-[85.6/53.98] rounded-[6px] overflow-hidden shadow-md border border-slate-700 bg-slate-950 cursor-grab active:cursor-grabbing group/canvas">
+          <canvas id={`mini-canvas-${side}`} class="w-full h-full object-cover block"></canvas>
+          <div class="absolute bottom-1 right-1 bg-black/70 text-[9px] text-slate-300 px-1.5 py-0.5 rounded opacity-75 group-hover/canvas:opacity-100 pointer-events-none">
+            Arrastra para centrar
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Herramientas rápidas -->
+  <div id={`controls-${side}`} class="hidden mt-3 pt-3 border-t border-slate-800 space-y-2">
+    <!-- Barra de botones: Rotar, Recentrar, Eliminar -->
+    <div class="flex items-center gap-1.5 text-xs">
+      <button 
+        type="button" 
+        id={`btn-rotate-${side}`} 
+        class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg flex items-center justify-center gap-1 transition font-medium text-[11px]"
+        title="Girar 90° a la derecha"
+      >
+        <svg class={`w-3.5 h-3.5 ${theme.rotateIcon}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>Girar 90°</span>
+      </button>
+
+      <button 
+        type="button" 
+        id={`btn-reset-${side}`} 
+        class="py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition font-medium text-[11px]"
+        title="Restablecer posición y zoom"
+      >
+        Recentrar
+      </button>
+
+      <button 
+        type="button" 
+        id={`btn-remove-${side}`} 
+        class="py-1.5 px-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg transition font-medium text-[11px]"
+        title="Quitar foto"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Control de Zoom -->
+    <div class="flex items-center justify-between bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
+      <span class="text-[10px] text-slate-400 font-medium">Zoom</span>
+      <div class="flex items-center gap-1.5">
+        <button 
+          type="button" 
+          id={`btn-zoom-out-${side}`} 
+          class={`w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 ${theme.zoomActive} text-slate-200 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none`}
+          title="Reducir zoom (-1%)"
+          aria-label="Reducir zoom"
+        >
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4" />
+          </svg>
+        </button>
+        <span id={`zoom-val-${side}`} class="text-[10px] font-mono text-slate-300 w-10 text-center select-none font-medium" title="Doble clic para restablecer al 100%">100%</span>
+        <button 
+          type="button" 
+          id={`btn-zoom-in-${side}`} 
+          class={`w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 ${theme.zoomActive} text-slate-200 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none`}
+          title="Aumentar zoom (+1%)"
+          aria-label="Aumentar zoom"
+        >
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -48,8 +48,7 @@ export function drawRoundedRect(
  */
 export async function renderCardToCanvas(
   card: CardState,
-  colorMode: ColorMode = 'original',
-  includeBorder: boolean = false
+  colorMode: ColorMode = 'original'
 ): Promise<HTMLCanvasElement> {
   const canvas = document.createElement('canvas');
   const width = CARD_CONFIG.CANVAS_WIDTH_PX;
@@ -129,26 +128,6 @@ export async function renderCardToCanvas(
   drawRoundedRect(ctx, 0, 0, width, height, radius);
   ctx.fill('evenodd');
   ctx.restore();
-
-  // 4. Trazo tenue de contorno de fotocopia (0.5 pt escalado a 300 DPI: ~2 px)
-  if (includeBorder) {
-    ctx.save();
-    ctx.beginPath();
-    const strokeWidth = Math.max(1.5, Math.round((CARD_CONFIG.BORDER_STROKE_PT / 72) * CARD_CONFIG.TARGET_DPI));
-    const halfStroke = strokeWidth / 2;
-    drawRoundedRect(
-      ctx,
-      halfStroke,
-      halfStroke,
-      width - strokeWidth,
-      height - strokeWidth,
-      Math.max(0, radius - halfStroke)
-    );
-    ctx.lineWidth = strokeWidth;
-    ctx.strokeStyle = CARD_CONFIG.BORDER_COLOR_HEX;
-    ctx.stroke();
-    ctx.restore();
-  }
 
   return canvas;
 }

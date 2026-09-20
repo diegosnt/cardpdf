@@ -149,11 +149,11 @@ Relevado a partir de un análisis interno del proyecto (seguridad, dependencias 
 - [x] Mantener Astro actualizado a la última versión estable (actualizado a `7.3.3`): `pnpm audit` pasó a 0 vulnerabilidades conocidas en todo el árbol de dependencias, y el tiempo de compilación estática se redujo a ~1.1s.
 
 ### 🧹 Calidad de código
-- [ ] Hacer que `tests/verify-specs.mjs` importe las constantes reales desde `src/utils/constants.ts` en lugar de duplicarlas a mano, para que el test detecte regresiones reales.
-- [ ] Revisar el parámetro `includeBorder` de `renderCardToCanvas`: siempre se invoca con `false`, por lo que el bloque de dibujo de borde en `imageProcessor.ts` es código muerto (exponerlo como opción real en la UI o eliminarlo).
-- [ ] Eliminar la variable `includeBorder` sin uso en `index.astro`.
-- [ ] Evaluar refactorizar `index.astro` para reducir la duplicación casi 1:1 entre los bloques "Frente" y "Dorso" (markup y handlers), parametrizando por `side`.
-- [ ] Configurar CI (GitHub Actions) para correr `pnpm test` y type-check en cada push/PR.
+- [x] Hacer que `tests/verify-specs.mjs` importe las constantes reales desde `src/utils/constants.ts` en lugar de duplicarlas a mano, garantizando que el test detecte regresiones reales en la geometría, centrado y resolución.
+- [x] Revisar el parámetro `includeBorder` de `renderCardToCanvas`: se eliminó el código muerto de dibujo de borde en `imageProcessor.ts`, la opción en `pdfGenerator.ts` y las constantes asociadas, manteniendo la salida fotográfica limpia sin marcos artificiales.
+- [x] Eliminar la variable `includeBorder` sin uso en `index.astro`.
+- [x] Evaluar refactorizar `index.astro` para reducir la duplicación casi 1:1 entre los bloques "Frente" y "Dorso" (markup y handlers): se extrajo el markup a `src/components/CardPanel.astro` parametrizado por `side`, y se unificaron los manejadores de eventos (drag & drop, zoom, paneo, rotación, carga y remoción de archivos) en bucle sobre `['front', 'back']`, reduciendo más de 250 líneas y eliminando la duplicación de lógica.
+- [x] Configuración de CI (GitHub Actions): evaluado y descartado por decisión de diseño; la ejecución de pruebas y chequeos se mantiene en el entorno local del desarrollador (`pnpm test` y `pnpm run build`), evitando workflows remotos innecesarios.
 
 ### 🎨 UX
 - [ ] Limitar el rango de paneo (arrastrar imagen) para evitar que la foto quede completamente fuera de cuadro sin más indicio que el botón "Recentrar".
