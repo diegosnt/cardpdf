@@ -1,4 +1,4 @@
-import { CARD_CONFIG, type ColorMode } from './constants';
+import { CARD_CONFIG, FILE_LIMITS, type ColorMode } from './constants';
 
 export interface CardState {
   file: File | null;
@@ -202,7 +202,11 @@ function applyColorFilter(
 export function loadFileAsImage(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith('image/')) {
-      return reject(new Error('El archivo seleccionado no es una imagen válida'));
+      return reject(new Error('El archivo seleccionado no es una imagen válida. Selecciona un archivo JPG, PNG o WebP.'));
+    }
+    if (file.size > FILE_LIMITS.MAX_FILE_SIZE_BYTES) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      return reject(new Error(`El archivo es demasiado pesado (${sizeMb} MB). El tamaño máximo permitido es de ${FILE_LIMITS.MAX_FILE_SIZE_MB} MB para evitar que el navegador se congele al procesarla.`));
     }
     const reader = new FileReader();
     reader.onload = (e) => {

@@ -74,7 +74,7 @@ import { CARD_CONFIG } from '../utils/constants';
                 <div class="text-xs text-slate-300 font-medium">
                   <span class="text-sky-400 underline">Elegir foto</span> o arrastrar
                 </div>
-                <p class="text-[10px] text-slate-500">JPG, PNG o WebP</p>
+                <p class="text-[10px] text-slate-500">JPG, PNG o WebP (máx. 20 MB)</p>
               </div>
 
               <!-- Vista interactiva con foto cargada -->
@@ -188,7 +188,7 @@ import { CARD_CONFIG } from '../utils/constants';
                 <div class="text-xs text-slate-300 font-medium">
                   <span class="text-indigo-400 underline">Elegir foto</span> o arrastrar
                 </div>
-                <p class="text-[10px] text-slate-500">JPG, PNG o WebP</p>
+                <p class="text-[10px] text-slate-500">JPG, PNG o WebP (máx. 20 MB)</p>
               </div>
 
               <!-- Vista interactiva con foto cargada -->
@@ -442,7 +442,7 @@ import { CARD_CONFIG } from '../utils/constants';
 <script>
   import { loadFileAsImage, renderCardToCanvas, type CardState } from '../utils/imageProcessor';
   import { generateAndDownloadPdf } from '../utils/pdfGenerator';
-  import { CARD_CONFIG, type ColorMode } from '../utils/constants';
+  import { CARD_CONFIG, FILE_LIMITS, type ColorMode } from '../utils/constants';
 
   // Estados de las tarjetas
   const frontCard: CardState = {
@@ -670,6 +670,23 @@ import { CARD_CONFIG } from '../utils/constants';
 
   // Manejador de selección de imagen
   async function handleFileSelect(file: File, side: 'front' | 'back') {
+    // Validación previa de tipo MIME
+    if (!file.type.startsWith('image/')) {
+      alert('El archivo seleccionado no es una imagen válida. Por favor selecciona un archivo JPG, PNG o WebP.');
+      if (side === 'front') fileFront.value = '';
+      else fileBack.value = '';
+      return;
+    }
+
+    // Validación preventiva de tamaño para evitar bloqueos del navegador a 300 DPI
+    if (file.size > FILE_LIMITS.MAX_FILE_SIZE_BYTES) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      alert(`La imagen seleccionada es demasiado pesada (${sizeMb} MB). El tamaño máximo permitido es de ${FILE_LIMITS.MAX_FILE_SIZE_MB} MB para evitar que el navegador se cuelgue al procesarla a 300 DPI.`);
+      if (side === 'front') fileFront.value = '';
+      else fileBack.value = '';
+      return;
+    }
+
     try {
       const img = await loadFileAsImage(file);
       const card = side === 'front' ? frontCard : backCard;
@@ -700,6 +717,8 @@ import { CARD_CONFIG } from '../utils/constants';
       updateDownloadButtonState();
     } catch (err) {
       alert((err as Error).message || 'Error al cargar la imagen');
+      if (side === 'front') fileFront.value = '';
+      else fileBack.value = '';
     }
   }
 

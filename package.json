@@ -2,6 +2,7 @@
   "name": "cardpdf",
   "version": "1.0.0",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -13,7 +14,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.0.0",
-    "jspdf": "^2.5.2",
+    "jspdf": "^4.2.1",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {

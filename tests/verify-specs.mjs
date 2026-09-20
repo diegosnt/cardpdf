@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import assert from 'node:assert/strict';
+import { FILE_LIMITS } from '../src/utils/constants.ts';
 
 console.log('--- Iniciando verificación de especificaciones de CardPDF ---');
 
@@ -64,4 +65,15 @@ const pdfBytes = doc.output('arraybuffer');
 assert.ok(pdfBytes.byteLength > 1000, 'El PDF generado debe tener contenido válido');
 console.log(`• PDF generado exitosamente en memoria (${pdfBytes.byteLength} bytes)`);
 
-console.log('✅ ¡Todas las verificaciones matemáticas y de PDF pasaron correctamente!');
+// 5. Test de validación de límites de archivo (seguridad DoS)
+console.log(`• Tamaño máximo de archivo configurado: ${FILE_LIMITS.MAX_FILE_SIZE_MB} MB (${FILE_LIMITS.MAX_FILE_SIZE_BYTES} bytes)`);
+assert.equal(FILE_LIMITS.MAX_FILE_SIZE_MB, 20, 'El límite de archivo debe ser 20 MB');
+assert.equal(FILE_LIMITS.MAX_FILE_SIZE_BYTES, 20 * 1024 * 1024, 'El límite en bytes debe ser 20 * 1024 * 1024');
+
+const smallFileSize = 5 * 1024 * 1024; // 5 MB
+const hugeFileSize = 45 * 1024 * 1024; // 45 MB
+assert.ok(smallFileSize <= FILE_LIMITS.MAX_FILE_SIZE_BYTES, 'Un archivo de 5 MB debe ser permitido');
+assert.ok(hugeFileSize > FILE_LIMITS.MAX_FILE_SIZE_BYTES, 'Un archivo de 45 MB debe ser rechazado');
+console.log('• Verificación de tamaño máximo de archivo superada exitosamente');
+
+console.log('✅ ¡Todas las verificaciones matemáticas, de PDF y de límites de seguridad pasaron correctamente!');

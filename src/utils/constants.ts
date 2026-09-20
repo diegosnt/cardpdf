@@ -54,3 +54,15 @@ export const CARD_CONFIG = {
 export const DNI_CONFIG = CARD_CONFIG;
 
 export type ColorMode = 'original' | 'grayscale' | 'photocopy';
+
+/**
+ * Límites de seguridad y formatos permitidos para la carga de imágenes
+ */
+export const FILE_LIMITS = {
+  MAX_FILE_SIZE_MB: 20,
+  get MAX_FILE_SIZE_BYTES() {
+    return this.MAX_FILE_SIZE_MB * 1024 * 1024;
+  },
+  ALLOWED_EXTENSIONS: ['jpg', 'jpeg', 'png', 'webp'],
+  ALLOWED_MIME_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
+} as const;

@@ -134,6 +134,32 @@ cardpdf/
 
 ---
 
+## 🧭 Tareas Pendientes / Mejoras
+
+Relevado a partir de un análisis interno del proyecto (seguridad, dependencias y calidad de código). Pendiente de priorizar e implementar.
+
+### 🔒 Seguridad
+- [x] Actualizar `jspdf` de `2.5.2` a `4.x`: la versión actual reportaba varias vulnerabilidades en auditoría (incluida una crítica de path traversal/LFI y un ReDoS/DoS). Actualizado a `4.2.1` — `pnpm audit` ya no reporta advisories de `jspdf` ni `dompurify`, y se verificó que `pnpm test` y la generación de PDF (frente/dorso) siguen funcionando correctamente.
+- [x] Agregar cabeceras de seguridad (`public/_headers` para Cloudflare Pages) con CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `HSTS` y cache inmutable para assets, coherente con la promesa de privacidad total.
+- [x] Agregar el archivo `LICENSE` (MIT) al repositorio: el README lo referencia y ahora cuenta con la licencia MIT oficial y el campo correspondiente en `package.json`.
+- [x] Validar tamaño máximo de archivo en la carga de imágenes (`handleFileSelect` y `loadFileAsImage`) limitado a 20 MB (`FILE_LIMITS`), con feedback claro en la UI y prevención de bloqueos por DoS/memoria al procesar a 300 DPI.
+
+### 📦 Dependencias
+- [x] Verificado tras actualizar `jspdf` a `4.2.1`: `html2canvas` y `dompurify` siguen generando chunks separados en `dist/_astro/` (import dinámico interno de jsPDF para su método `.html()`, que no usamos), pero `dist/index.html` no los referencia ni precarga — el navegador nunca los descarga en tiempo de ejecución. No es peso muerto real para el usuario; solo archivos de más en el build.
+- [ ] Mantener Astro actualizado a la última versión estable (aunque las CVEs de SSR no aplican a este build 100% estático).
+
+### 🧹 Calidad de código
+- [ ] Hacer que `tests/verify-specs.mjs` importe las constantes reales desde `src/utils/constants.ts` en lugar de duplicarlas a mano, para que el test detecte regresiones reales.
+- [ ] Revisar el parámetro `includeBorder` de `renderCardToCanvas`: siempre se invoca con `false`, por lo que el bloque de dibujo de borde en `imageProcessor.ts` es código muerto (exponerlo como opción real en la UI o eliminarlo).
+- [ ] Eliminar la variable `includeBorder` sin uso en `index.astro`.
+- [ ] Evaluar refactorizar `index.astro` para reducir la duplicación casi 1:1 entre los bloques "Frente" y "Dorso" (markup y handlers), parametrizando por `side`.
+- [ ] Configurar CI (GitHub Actions) para correr `pnpm test` y type-check en cada push/PR.
+
+### 🎨 UX
+- [ ] Limitar el rango de paneo (arrastrar imagen) para evitar que la foto quede completamente fuera de cuadro sin más indicio que el botón "Recentrar".
+
+---
+
 ## 📄 Licencia
 
 Este proyecto es software libre bajo la licencia [MIT](LICENSE).
