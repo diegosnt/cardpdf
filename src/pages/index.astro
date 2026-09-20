@@ -127,18 +127,33 @@ import { CARD_CONFIG } from '../utils/constants';
             </div>
 
             <!-- Control de Zoom -->
-            <div class="flex items-center gap-2 bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
-              <span class="text-[10px] text-slate-400 font-medium w-10">Zoom</span>
-              <input 
-                type="range" 
-                id="zoom-front" 
-                min="0.6" 
-                max="2.5" 
-                step="0.05" 
-                value="1" 
-                class="w-full accent-sky-500 cursor-pointer h-1 bg-slate-800 rounded-lg"
-              />
-              <span id="zoom-val-front" class="text-[10px] font-mono text-slate-300 w-8 text-right">100%</span>
+            <div class="flex items-center justify-between bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
+              <span class="text-[10px] text-slate-400 font-medium">Zoom</span>
+              <div class="flex items-center gap-1.5">
+                <button 
+                  type="button" 
+                  id="btn-zoom-out-front" 
+                  class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 active:bg-sky-600/30 text-slate-200 hover:text-sky-300 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none"
+                  title="Reducir zoom (-1%)"
+                  aria-label="Reducir zoom"
+                >
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4" />
+                  </svg>
+                </button>
+                <span id="zoom-val-front" class="text-[10px] font-mono text-slate-300 w-10 text-center select-none font-medium" title="Doble clic para restablecer al 100%">100%</span>
+                <button 
+                  type="button" 
+                  id="btn-zoom-in-front" 
+                  class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 active:bg-sky-600/30 text-slate-200 hover:text-sky-300 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none"
+                  title="Aumentar zoom (+1%)"
+                  aria-label="Aumentar zoom"
+                >
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -226,18 +241,33 @@ import { CARD_CONFIG } from '../utils/constants';
             </div>
 
             <!-- Control de Zoom -->
-            <div class="flex items-center gap-2 bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
-              <span class="text-[10px] text-slate-400 font-medium w-10">Zoom</span>
-              <input 
-                type="range" 
-                id="zoom-back" 
-                min="0.6" 
-                max="2.5" 
-                step="0.05" 
-                value="1" 
-                class="w-full accent-indigo-500 cursor-pointer h-1 bg-slate-800 rounded-lg"
-              />
-              <span id="zoom-val-back" class="text-[10px] font-mono text-slate-300 w-8 text-right">100%</span>
+            <div class="flex items-center justify-between bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800/80">
+              <span class="text-[10px] text-slate-400 font-medium">Zoom</span>
+              <div class="flex items-center gap-1.5">
+                <button 
+                  type="button" 
+                  id="btn-zoom-out-back" 
+                  class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 active:bg-indigo-600/30 text-slate-200 hover:text-indigo-300 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none"
+                  title="Reducir zoom (-1%)"
+                  aria-label="Reducir zoom"
+                >
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4" />
+                  </svg>
+                </button>
+                <span id="zoom-val-back" class="text-[10px] font-mono text-slate-300 w-10 text-center select-none font-medium" title="Doble clic para restablecer al 100%">100%</span>
+                <button 
+                  type="button" 
+                  id="btn-zoom-in-back" 
+                  class="w-6 h-6 flex items-center justify-center rounded bg-slate-800 hover:bg-slate-700 active:bg-indigo-600/30 text-slate-200 hover:text-indigo-300 font-bold transition disabled:opacity-30 disabled:cursor-not-allowed select-none"
+                  title="Aumentar zoom (+1%)"
+                  aria-label="Aumentar zoom"
+                >
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -436,6 +466,11 @@ import { CARD_CONFIG } from '../utils/constants';
   let currentColorMode: ColorMode = 'original';
   let includeBorder: boolean = true;
 
+  // Parámetros de Zoom (1% por paso para ajuste fino sin saltos de 5 en 5)
+  const MIN_ZOOM = 0.5; // 50%
+  const MAX_ZOOM = 3.0; // 300%
+  const ZOOM_STEP = 0.01; // 1%
+
   // DOM Elements - Frente
   const dropzoneFront = document.getElementById('dropzone-front') as HTMLElement;
   const fileFront = document.getElementById('file-front') as HTMLInputElement;
@@ -446,7 +481,8 @@ import { CARD_CONFIG } from '../utils/constants';
   const btnRotateFront = document.getElementById('btn-rotate-front') as HTMLButtonElement;
   const btnResetFront = document.getElementById('btn-reset-front') as HTMLButtonElement;
   const btnRemoveFront = document.getElementById('btn-remove-front') as HTMLButtonElement;
-  const zoomFront = document.getElementById('zoom-front') as HTMLInputElement;
+  const btnZoomOutFront = document.getElementById('btn-zoom-out-front') as HTMLButtonElement;
+  const btnZoomInFront = document.getElementById('btn-zoom-in-front') as HTMLButtonElement;
   const zoomValFront = document.getElementById('zoom-val-front') as HTMLElement;
   const badgeFront = document.getElementById('badge-front') as HTMLElement;
   const canvasPreviewFront = document.getElementById('canvas-preview-front') as HTMLCanvasElement;
@@ -463,7 +499,8 @@ import { CARD_CONFIG } from '../utils/constants';
   const btnRotateBack = document.getElementById('btn-rotate-back') as HTMLButtonElement;
   const btnResetBack = document.getElementById('btn-reset-back') as HTMLButtonElement;
   const btnRemoveBack = document.getElementById('btn-remove-back') as HTMLButtonElement;
-  const zoomBack = document.getElementById('zoom-back') as HTMLInputElement;
+  const btnZoomOutBack = document.getElementById('btn-zoom-out-back') as HTMLButtonElement;
+  const btnZoomInBack = document.getElementById('btn-zoom-in-back') as HTMLButtonElement;
   const zoomValBack = document.getElementById('zoom-val-back') as HTMLElement;
   const badgeBack = document.getElementById('badge-back') as HTMLElement;
   const canvasPreviewBack = document.getElementById('canvas-preview-back') as HTMLCanvasElement;
@@ -534,6 +571,103 @@ import { CARD_CONFIG } from '../utils/constants';
     }
   }
 
+  // Actualiza visualización y estado de los botones de zoom
+  function updateZoomDisplay(side: 'front' | 'back') {
+    const card = side === 'front' ? frontCard : backCard;
+    const zoomVal = side === 'front' ? zoomValFront : zoomValBack;
+    const btnOut = side === 'front' ? btnZoomOutFront : btnZoomOutBack;
+    const btnIn = side === 'front' ? btnZoomInFront : btnZoomInBack;
+
+    if (zoomVal) {
+      zoomVal.textContent = `${Math.round(card.zoom * 100)}%`;
+    }
+    if (btnOut) {
+      btnOut.disabled = card.zoom <= MIN_ZOOM + 0.0001;
+    }
+    if (btnIn) {
+      btnIn.disabled = card.zoom >= MAX_ZOOM - 0.0001;
+    }
+  }
+
+  // Ajusta el zoom en pasos de 1% (ZOOM_STEP = 0.01) sin saltos grandes
+  function adjustZoom(side: 'front' | 'back', delta: number) {
+    const card = side === 'front' ? frontCard : backCard;
+    if (!card.imageElement) return;
+
+    const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round((card.zoom + delta) * 100) / 100));
+    if (Math.abs(newZoom - card.zoom) < 0.0001) return;
+
+    card.zoom = newZoom;
+    updateZoomDisplay(side);
+    updateCardRender(side);
+  }
+
+  // Configura los botones - y + con soporte para clic rápido y pulsación continua
+  function setupZoomControls(side: 'front' | 'back') {
+    const isFront = side === 'front';
+    const btnOut = isFront ? btnZoomOutFront : btnZoomOutBack;
+    const btnIn = isFront ? btnZoomInFront : btnZoomInBack;
+    const zoomVal = isFront ? zoomValFront : zoomValBack;
+
+    const attachHoldListener = (btn: HTMLButtonElement, delta: number) => {
+      let timeoutId: number | null = null;
+      let intervalId: number | null = null;
+
+      const clearTimers = () => {
+        if (timeoutId !== null) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+        if (intervalId !== null) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      };
+
+      btn.addEventListener('pointerdown', (e: PointerEvent) => {
+        if (btn.disabled) return;
+        e.preventDefault();
+        e.stopPropagation();
+        clearTimers();
+        adjustZoom(side, delta);
+
+        timeoutId = window.setTimeout(() => {
+          intervalId = window.setInterval(() => {
+            if (btn.disabled) {
+              clearTimers();
+              return;
+            }
+            adjustZoom(side, delta);
+          }, 40);
+        }, 300);
+      });
+
+      btn.addEventListener('pointerup', clearTimers);
+      btn.addEventListener('pointerleave', clearTimers);
+      btn.addEventListener('pointercancel', clearTimers);
+
+      btn.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          adjustZoom(side, delta);
+        }
+      });
+    };
+
+    attachHoldListener(btnOut, -ZOOM_STEP);
+    attachHoldListener(btnIn, ZOOM_STEP);
+
+    // Doble clic en el indicador para restablecer rápidamente al 100%
+    zoomVal.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      const card = isFront ? frontCard : backCard;
+      if (!card.imageElement) return;
+      card.zoom = 1.0;
+      updateZoomDisplay(side);
+      updateCardRender(side);
+    });
+  }
+
   // Manejador de selección de imagen
   async function handleFileSelect(file: File, side: 'front' | 'back') {
     try {
@@ -547,16 +681,14 @@ import { CARD_CONFIG } from '../utils/constants';
       card.offsetY = 0;
 
       if (side === 'front') {
-        zoomFront.value = '1';
-        zoomValFront.textContent = '100%';
+        updateZoomDisplay('front');
         emptyStateFront.classList.add('hidden');
         previewContainerFront.classList.remove('hidden');
         controlsFront.classList.remove('hidden');
         badgeFront.textContent = 'Listo';
         badgeFront.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30';
       } else {
-        zoomBack.value = '1';
-        zoomValBack.textContent = '100%';
+        updateZoomDisplay('back');
         emptyStateBack.classList.add('hidden');
         previewContainerBack.classList.remove('hidden');
         controlsBack.classList.remove('hidden');
@@ -583,6 +715,7 @@ import { CARD_CONFIG } from '../utils/constants';
 
     if (side === 'front') {
       fileFront.value = '';
+      updateZoomDisplay('front');
       emptyStateFront.classList.remove('hidden');
       previewContainerFront.classList.add('hidden');
       controlsFront.classList.add('hidden');
@@ -590,6 +723,7 @@ import { CARD_CONFIG } from '../utils/constants';
       badgeFront.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700';
     } else {
       fileBack.value = '';
+      updateZoomDisplay('back');
       emptyStateBack.classList.remove('hidden');
       previewContainerBack.classList.add('hidden');
       controlsBack.classList.add('hidden');
@@ -658,6 +792,10 @@ import { CARD_CONFIG } from '../utils/constants';
   setupPanInteractions(canvasPreviewFront, 'front');
   setupPanInteractions(canvasPreviewBack, 'back');
 
+  // Activar controles de zoom (- y +)
+  setupZoomControls('front');
+  setupZoomControls('back');
+
   // Listeners Frente
   dropzoneFront.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).closest('#controls-front') || (e.target as HTMLElement).closest('#preview-container-front')) return;
@@ -700,15 +838,7 @@ import { CARD_CONFIG } from '../utils/constants';
     frontCard.zoom = 1.0;
     frontCard.offsetX = 0;
     frontCard.offsetY = 0;
-    zoomFront.value = '1';
-    zoomValFront.textContent = '100%';
-    updateCardRender('front');
-  });
-
-  zoomFront.addEventListener('input', (e) => {
-    const val = parseFloat((e.target as HTMLInputElement).value);
-    frontCard.zoom = val;
-    zoomValFront.textContent = `${Math.round(val * 100)}%`;
+    updateZoomDisplay('front');
     updateCardRender('front');
   });
 
@@ -759,15 +889,7 @@ import { CARD_CONFIG } from '../utils/constants';
     backCard.zoom = 1.0;
     backCard.offsetX = 0;
     backCard.offsetY = 0;
-    zoomBack.value = '1';
-    zoomValBack.textContent = '100%';
-    updateCardRender('back');
-  });
-
-  zoomBack.addEventListener('input', (e) => {
-    const val = parseFloat((e.target as HTMLInputElement).value);
-    backCard.zoom = val;
-    zoomValBack.textContent = `${Math.round(val * 100)}%`;
+    updateZoomDisplay('back');
     updateCardRender('back');
   });
 

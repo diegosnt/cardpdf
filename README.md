@@ -55,7 +55,7 @@ La disposición geométrica cumple rigurosamente con los estándares internacion
 2. **Edición Rápida y Encuadre Interactivo:**
    * **Rotación en pasos de 90°:** Permite corregir fotos tomadas en vertical u horizontal con un solo clic.
    * **Arrastrar para centrar (Pan interactivo):** Haz clic y arrastra directamente sobre la tarjeta para encuadrar tu documento si la foto tiene margen sobrante.
-   * **Control de Zoom:** Control deslizante continuo (de 60% a 250%) con botón de **Recentrado**.
+   * **Control de Zoom de Alta Precisión:** Botones **`-`** y **`+`** con pasos finos de **1% en 1% (`±0.01`)**, eliminando saltos bruscos. Admite clics individuales para ajuste milimétrico, pulsación continua (*hold-to-zoom*) para variación rápida, doble clic sobre el indicador para restablecer al 100% y botón de **Recentrado** integral (posición y zoom).
 3. **Selector de Estilo de Fotocopia:**
    * **🌈 Color Real:** Preserva fielmente la fotografía original.
    * **🔘 Escala de Grises:** Conversión monocromática con ponderación de luminancia según norma ITU-R BT.601 ($Y = 0.299R + 0.587G + 0.114B$).
