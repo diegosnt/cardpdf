@@ -1,11 +1,14 @@
 # 🪪 CardPDF
 
+[![Web App](https://img.shields.io/badge/Web_App-cardpdf.pages.dev-38BDF8?style=flat-square&logo=cloudflarepages&logoColor=white)](https://cardpdf.pages.dev/)
 [![Astro](https://img.shields.io/badge/Astro-5.x-BC52EE?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-11.x-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![Client-Side Privacy](https://img.shields.io/badge/Privacidad-100%25_Client--Side-10B981?style=flat-square&logo=shield&logoColor=white)](#-privacidad-y-seguridad-estricta)
 [![Estándar ID-1](https://img.shields.io/badge/Formato-ISO%2FIEC_7810_ID--1_(CR80)-blue?style=flat-square)](#-especificaciones-t%C3%A9cnicas-y-geometr%C3%ADa)
+
+> 🚀 **Uso en línea sin registro:** Puedes utilizar CardPDF directamente en **[https://cardpdf.pages.dev/](https://cardpdf.pages.dev/)**. No requiere ninguna registración previa, instalación ni configuración; es de acceso libre, instantáneo y 100% privado en tu navegador.
 
 **CardPDF** es una aplicación web ligera de alta precisión desarrollada con **Astro**, **TypeScript** y **Tailwind CSS**. Permite generar un archivo PDF que simula una fotocopia en **tamaño real (escala 100%)** sobre una hoja **A4 estándar**, soportando **cualquier tarjeta o documento bajo el estándar internacional ISO/IEC 7810 ID-1 (CR80)** con dimensiones exactas de **85,60 mm × 53,98 mm** (proporción 1.586).
 
@@ -110,23 +113,23 @@ pnpm test
 cardpdf/
 ├── src/
 │   ├── layouts/
-│   │   └── Layout.astro         # Plantilla base, cabecera moderna, badges y favicon SVG
+│   │   └── Layout.astro      # Plantilla base, cabecera moderna, badges y favicon SVG
 │   ├── pages/
-│   │   └── index.astro          # Página principal con dropzones, controles y A4 Preview
+│   │   └── index.astro       # Página principal con dropzones, controles y A4 Preview
 │   ├── styles/
-│   │   └── global.css           # Configuración base e importación de Tailwind CSS v4
+│   │   └── global.css        # Configuración base e importación de Tailwind CSS v4
 │   └── utils/
-│       ├── constants.ts         # Medidas geométricas ID-1 (mm y px a 300 DPI) y layout A4
-│       ├── imageProcessor.ts    # Motor Canvas: esquinas 3.18mm, rotación, pan, zoom y filtros
-│       └── pdfGenerator.ts      # Generador milimétrico con jsPDF y escala 100%
+│       ├── constants.ts      # Medidas geométricas ID-1 (mm y px a 300 DPI) y layout A4
+│       ├── imageProcessor.ts # Motor Canvas: esquinas 3.18mm, rotación, pan, zoom y filtros
+│       └── pdfGenerator.ts   # Generador milimétrico con jsPDF y escala 100%
 ├── tests/
-│   └── verify-specs.mjs         # Test unitario automatizado de medidas y generación PDF
-├── astro.config.mjs             # Configuración de Astro con plugin Tailwind CSS de Vite
-├── package.json                 # Scripts y manifiesto de dependencias
-├── pnpm-workspace.yaml          # Políticas de seguridad pnpm para ejecución de scripts
-├── pnpm-lock.yaml               # Árbol de dependencias estricto e inmutable
-├── tsconfig.json                # Configuración TypeScript en modo estricto
-└── README.md                    # Documentación técnica del proyecto
+│   └── verify-specs.mjs      # Test unitario automatizado de medidas y generación PDF
+├── astro.config.mjs          # Configuración de Astro con plugin Tailwind CSS de Vite
+├── package.json              # Scripts y manifiesto de dependencias
+├── pnpm-workspace.yaml       # Políticas de seguridad pnpm para ejecución de scripts
+├── pnpm-lock.yaml            # Árbol de dependencias estricto e inmutable
+├── tsconfig.json             # Configuración TypeScript en modo estricto
+└── README.md                 # Documentación técnica del proyecto
 ```
 
 ---
