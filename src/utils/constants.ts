@@ -66,9 +66,6 @@ export const CARD_CONFIG = {
   }
 } as const;
 
-// Alias retrocompatible
-export const DNI_CONFIG = CARD_CONFIG;
-
 export type ColorMode = 'original' | 'grayscale' | 'photocopy';
 export type LayoutMode = 'vertical' | 'horizontal';
 export type HorizontalRowCount = 1 | 2 | 3 | 4;
@@ -82,5 +79,5 @@ export const FILE_LIMITS = {
     return this.MAX_FILE_SIZE_MB * 1024 * 1024;
   },
   ALLOWED_EXTENSIONS: ['jpg', 'jpeg', 'png', 'webp'],
-  ALLOWED_MIME_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
+  ALLOWED_MIME_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
 } as const;

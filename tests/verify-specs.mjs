@@ -1,7 +1,12 @@
 import { jsPDF } from 'jspdf';
 import assert from 'node:assert/strict';
-import { CARD_CONFIG, DNI_CONFIG, FILE_LIMITS } from '../src/utils/constants.ts';
-import { calculateMaxPanOffsets, clampCardOffsets } from '../src/utils/imageProcessor.ts';
+import { CARD_CONFIG, FILE_LIMITS } from '../src/utils/constants.ts';
+import {
+  calculateMaxPanOffsets,
+  clampCardOffsets,
+  isValidImageFileType,
+  validateImageFile,
+} from '../src/utils/imageProcessor.ts';
 
 console.log('--- Iniciando verificación de especificaciones de CardPDF ---');
 
@@ -60,9 +65,6 @@ const interSetSpacing = (A4_HEIGHT_MM / 2 - firstSetEnd) * 2; // 17.04 mm
 assert.ok(interSetSpacing > SPACING_MM, 'La separación entre juegos (17.04 mm) debe ser un poquito mayor que entre fotos (12.02 mm)');
 assert.equal(Number(interSetSpacing.toFixed(2)), 17.04, 'La separación entre juegos debe ser exactamente 17.04 mm');
 console.log(`• Separación entre fotos: ${SPACING_MM.toFixed(2)} mm | Separación entre juegos: ${interSetSpacing.toFixed(2)} mm`);
-
-// Validación de alias retrocompatible
-assert.equal(DNI_CONFIG, CARD_CONFIG, 'DNI_CONFIG debe ser un alias idéntico a CARD_CONFIG');
 
 // 2. Verificación de cálculo a 300 DPI
 console.log(`• Resolución a ${TARGET_DPI} DPI: ${CANVAS_WIDTH_PX} × ${CANVAS_HEIGHT_PX} px (Radio: ${CANVAS_RADIUS_PX.toFixed(1)} px)`);
@@ -167,7 +169,7 @@ const pdfHoriz4Bytes = docHoriz4.output('arraybuffer');
 assert.ok(pdfHoriz4Bytes.byteLength > pdfHoriz1Bytes.byteLength, 'El PDF con 4 filas (8 tarjetas) debe contener más bytes');
 console.log(`• PDF en disposición horizontal: 1 fila (${pdfHoriz1Bytes.byteLength} bytes) y 4 filas / 8 tarjetas (${pdfHoriz4Bytes.byteLength} bytes) generados exitosamente`);
 
-// 4. Test de validación de límites de archivo (seguridad DoS)
+// 4. Test de validación de archivos (formatos autorizados y límites de tamaño DoS)
 console.log(`• Tamaño máximo de archivo configurado: ${FILE_LIMITS.MAX_FILE_SIZE_MB} MB (${FILE_LIMITS.MAX_FILE_SIZE_BYTES} bytes)`);
 assert.equal(FILE_LIMITS.MAX_FILE_SIZE_MB, 20, 'El límite de archivo debe ser 20 MB');
 assert.equal(FILE_LIMITS.MAX_FILE_SIZE_BYTES, 20 * 1024 * 1024, 'El límite en bytes debe ser 20 * 1024 * 1024');
@@ -176,7 +178,50 @@ const smallFileSize = 5 * 1024 * 1024; // 5 MB
 const hugeFileSize = 45 * 1024 * 1024; // 45 MB
 assert.ok(smallFileSize <= FILE_LIMITS.MAX_FILE_SIZE_BYTES, 'Un archivo de 5 MB debe ser permitido');
 assert.ok(hugeFileSize > FILE_LIMITS.MAX_FILE_SIZE_BYTES, 'Un archivo de 45 MB debe ser rechazado');
-console.log('• Verificación de tamaño máximo de archivo superada exitosamente');
+
+// 4.1. Verificación de formatos permitidos (JPG, JPEG, PNG, WebP)
+assert.ok(isValidImageFileType({ name: 'documento.jpg', type: 'image/jpeg' }), 'JPG debe ser válido');
+assert.ok(isValidImageFileType({ name: 'documento.jpeg', type: 'image/jpeg' }), 'JPEG debe ser válido');
+assert.ok(isValidImageFileType({ name: 'documento.png', type: 'image/png' }), 'PNG debe ser válido');
+assert.ok(isValidImageFileType({ name: 'documento.webp', type: 'image/webp' }), 'WebP debe ser válido');
+assert.ok(isValidImageFileType({ name: 'documento.jpg', type: 'image/jpg' }), 'MIME legacy image/jpg debe ser válido');
+assert.ok(isValidImageFileType({ name: 'foto.JPG', type: 'image/jpeg' }), 'Extensiones en mayúsculas deben ser válidas');
+assert.ok(isValidImageFileType({ name: 'foto.png', type: 'IMAGE/PNG' }), 'MIME types en mayúsculas deben ser válidos');
+assert.ok(isValidImageFileType({ name: 'captura.png', type: 'image/png; charset=utf-8' }), 'MIME con parámetros adicionales debe ser válido');
+assert.ok(isValidImageFileType({ name: 'blob', type: 'image/jpeg' }), 'Archivo sin extensión pero con MIME válido debe ser permitido');
+assert.ok(isValidImageFileType({ name: 'foto.webp', type: '' }), 'Archivo sin MIME pero con extensión permitida debe ser permitido');
+
+// 4.2. Rechazo estricto de formatos no soportados (SVG, GIF, PDF, etc.)
+assert.ok(!isValidImageFileType({ name: 'vector.svg', type: 'image/svg+xml' }), 'SVG debe ser rechazado');
+assert.ok(!isValidImageFileType({ name: 'animacion.gif', type: 'image/gif' }), 'GIF debe ser rechazado');
+assert.ok(!isValidImageFileType({ name: 'imagen.bmp', type: 'image/bmp' }), 'BMP debe ser rechazado');
+assert.ok(!isValidImageFileType({ name: 'documento.pdf', type: 'application/pdf' }), 'PDF debe ser rechazado');
+assert.ok(!isValidImageFileType({ name: 'script.js', type: 'text/javascript' }), 'JS debe ser rechazado');
+assert.ok(!isValidImageFileType({ name: 'archivo_peligroso.svg', type: 'image/jpeg' }), 'Extensión SVG con MIME simulado debe ser rechazada');
+assert.ok(!isValidImageFileType({ name: 'disfrazado.jpg', type: 'image/svg+xml' }), 'MIME SVG con extensión JPG debe ser rechazado');
+assert.ok(!isValidImageFileType(null), 'Objeto nulo debe ser rechazado');
+assert.ok(!isValidImageFileType({ name: '', type: '' }), 'Archivo sin nombre ni tipo debe ser rechazado');
+
+// 4.3. Validación integral mediante validateImageFile
+const validFile = new File(['dummy content'], 'dni-frente.jpg', { type: 'image/jpeg' });
+const validResult = validateImageFile(validFile);
+assert.equal(validResult.valid, true, 'Archivo válido debe pasar la validación integral');
+
+const svgFile = new File(['<svg></svg>'], 'dni.svg', { type: 'image/svg+xml' });
+const svgResult = validateImageFile(svgFile);
+assert.equal(svgResult.valid, false, 'Archivo SVG debe ser rechazado en la validación integral');
+assert.ok(svgResult.error?.includes('JPG, PNG o WebP'), 'El mensaje de error debe indicar los formatos permitidos');
+
+const hugeFileMock = {
+  name: 'foto_pesada.jpg',
+  type: 'image/jpeg',
+  size: 35 * 1024 * 1024,
+};
+const hugeResult = validateImageFile(hugeFileMock);
+assert.equal(hugeResult.valid, false, 'Archivo > 20 MB debe ser rechazado');
+assert.ok(hugeResult.error?.includes('demasiado pesada') || hugeResult.error?.includes('demasiado pesado'), 'El mensaje debe alertar sobre el peso');
+
+console.log('• Verificación de formatos y validación de archivos superada exitosamente');
 
 // 5. Test de limitación de rango de paneo (UX Clamping)
 const mockImg = { naturalWidth: 1011, naturalHeight: 638 };

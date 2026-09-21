@@ -3,14 +3,15 @@
 [![Web App](https://img.shields.io/badge/Web_App-cardpdf.pages.dev-38BDF8?style=flat-square&logo=cloudflarepages&logoColor=white)](https://cardpdf.pages.dev/)
 [![Astro](https://img.shields.io/badge/Astro-7.x-BC52EE?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-11.x-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![Client-Side Privacy](https://img.shields.io/badge/Privacidad-100%25_Client--Side-10B981?style=flat-square&logo=shield&logoColor=white)](#-privacidad-y-seguridad-estricta)
 [![Estándar ID-1](https://img.shields.io/badge/Formato-ISO%2FIEC_7810_ID--1_(CR80)-blue?style=flat-square)](#-especificaciones-t%C3%A9cnicas-y-geometr%C3%ADa)
+[![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-yellow?style=flat-square)](LICENSE)
 
 > 🚀 **Uso en línea sin registro:** Puedes utilizar CardPDF directamente en **[https://cardpdf.pages.dev/](https://cardpdf.pages.dev/)**. No requiere ninguna registración previa, instalación ni configuración; es de acceso libre, instantáneo y 100% privado en tu navegador.
 
-**CardPDF** es una aplicación web ligera de alta precisión desarrollada con **Astro**, **TypeScript** y **Tailwind CSS**. Permite generar un archivo PDF que simula una fotocopia en **tamaño real (escala 100%)** sobre una hoja **A4 estándar**, soportando **cualquier tarjeta o documento bajo el estándar internacional ISO/IEC 7810 ID-1 (CR80)** con dimensiones exactas de **85,60 mm × 53,98 mm** (proporción 1.586).
+**CardPDF** es una aplicación web ligera y de alta fidelidad desarrollada con **Astro**, **TypeScript** y **Tailwind CSS**. Permite generar un archivo PDF que simula una fotocopia en **tamaño real (escala 100%)** sobre una hoja **A4 estándar**, soportando **cualquier tarjeta o documento bajo el estándar internacional ISO/IEC 7810 ID-1 (CR80)** con dimensiones exactas de **85,60 mm × 53,98 mm** (proporción 1.586).
 
 ### 💳 Documentos y Tarjetas Compatibles
 * **Documentos de Identidad:** DNI Tarjeta, Cédula de Identidad, Pasaporte tipo tarjeta.
@@ -23,10 +24,23 @@
 
 ## 🔒 Privacidad y Seguridad Estricta
 
-El procesamiento de documentos personales y credenciales requiere las máximas garantías de privacidad:
-* **100% Client-Side:** Todo el recorte, ajuste de contraste, renderizado en alta resolución y generación del PDF ocurre íntegramente en la memoria de tu navegador (HTML5 `<canvas>` y `jspdf`).
-* **Cero servidores:** Ningún archivo o dato se envía a servidores, nubes ni APIs externas.
-* **Seguridad de dependencias con pnpm:** Aislamiento estricto de scripts de compilación mediante `pnpm-workspace.yaml`, previniendo vulnerabilidades de cadena de suministro (supply-chain attacks).
+El procesamiento de documentos personales y credenciales requiere las máximas garantías de privacidad y protección técnica:
+
+* **100% Client-Side:** Todo el recorte, ajuste de contraste, renderizado en alta resolución y generación del PDF ocurre íntegramente en la memoria de tu navegador (HTML5 `<canvas>` y `jsPDF`).
+* **Cero servidores / Cero telemetría:** Ningún archivo, imagen ni metadato se envía a servidores, nubes ni APIs externas.
+* **Validación Rigurosa de Formatos y Tipos MIME:**
+  * Admite exclusivamente formatos de imagen rasterizados seguros: `.jpg`, `.jpeg`, `.png` y `.webp`.
+  * Validación dual preventiva (extensión y tipo MIME) antes de procesar el archivo en memoria.
+* **Prevención de Contaminación de Canvas y Ataques XSS:** Bloqueo explícito de formatos vectoriales como SVG (que pueden inyectar scripts en el DOM o marcar como "tainted" el contexto gráfico del Canvas), GIF, TIFF, BMP, PDF o ejecutables disfrazados.
+* **Protección contra Sobrecarga y DoS en Navegador:** Límite estricto de **20 MB** por archivo (`FILE_LIMITS.MAX_FILE_SIZE_MB`), alertando al usuario antes de saturar memoria o congelar el hilo principal del navegador al trabajar a 300 DPI.
+* **Cabeceras HTTP de Seguridad Avanzadas (`public/_headers`):** Políticas estrictas configuradas para despliegue en Cloudflare Pages:
+  * **Content Security Policy (CSP):** `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';` (bloquea cualquier petición de red saliente desde el navegador).
+  * **X-Frame-Options:** `DENY` (protección contra clickjacking).
+  * **X-Content-Type-Options:** `nosniff` (previene ataques de MIME sniffing).
+  * **Strict-Transport-Security (HSTS):** `max-age=31536000; includeSubDomains; preload`.
+  * **Permissions-Policy:** Deshabilita el acceso a cámara, micrófono, geolocalización, acelerómetro, pagos, etc.
+  * **Referrer-Policy:** `strict-origin-when-cross-origin`.
+* **Aislamiento de Dependencias:** Configuración en `pnpm-workspace.yaml` para prevenir ejecución no autorizada de scripts durante la instalación de paquetes.
 
 ---
 
@@ -66,9 +80,10 @@ La disposición geométrica cumple rigurosamente con los estándares internacion
 
 ## ✨ Características y Flujo de Uso
 
-1. **Zonas de Carga Independientes (Dropzones):**
-   * Dos áreas identificadas para "Frente" y "Dorso" con soporte para arrastrar y soltar o explorador de archivos (`.jpg`, `.png`, `.webp`).
-   * Protección de seguridad contra sobrecarga (DoS) con límite configurado de **20 MB** por archivo.
+1. **Arquitectura Modular de Paneles (`CardPanel.astro`):**
+   * Paneles desacoplados para "Frente" y "Dorso" con dropzones para arrastrar y soltar o explorar archivos.
+   * Filtro de entrada `accept` restrictivo en el navegador y validación estricta de tipos de imagen (`.jpg`, `.jpeg`, `.png`, `.webp`).
+   * Alerta preventiva y bloqueo inmediato ante archivos que excedan los **20 MB** para evitar saturación de memoria.
 2. **Edición Rápida y Encuadre Interactivo:**
    * **Rotación en pasos de 90°:** Corrige fotos tomadas en vertical u horizontal con un solo clic.
    * **Arrastrar para centrar (Pan interactivo con Clamping):** Haz clic y arrastra directamente sobre la tarjeta para encuadrar tu documento. Incluye delimitación inteligente (*UX clamping*) para evitar perder la imagen fuera de los márgenes visibles, recalculado dinámicamente según zoom y rotación.
@@ -82,7 +97,7 @@ La disposición geométrica cumple rigurosamente con los estándares internacion
    * **➡️ Una al lado de otra (En paralelo):** Posicionamiento horizontal con márgenes laterales ampliados de $16.00\text{ mm}$ y separación compacta de $6.80\text{ mm}$ entre frente y dorso.
 5. **Múltiples Copias y Filas en 1 Hoja:**
    * **En modo vertical:** Tilde opcional para imprimir **2 juegos completos idénticos** (4 tarjetas: 2 frentes y 2 dorsos) en la misma hoja A4 con separación diferenciada de $17.04\text{ mm}$ para fácil guillotinado.
-   * **En modo horizontal:** Selector interactivo de **1 fila** (2 fotos), **2 filas** (4 fotos), **3 filas** (6 fotos) o **4 filas** (8 fotos) aprovechando la hoja A4 al 100% con márgenes perimetrales de $16.00\text{ mm}$ y separación vertical uniforme de $16.36\text{ mm}$.
+   * **En modo horizontal:** Selector interactivo de **1 fila** (2 fotos), **2 filas** (4 fotos), **3 filas** (6 fotos) o **4 filas** (8 fotos) aprovechando la hoja A4 al 100% con márgenes perimetrales simétricos de $16.00\text{ mm}$ y separación vertical uniforme de $16.36\text{ mm}$.
 6. **Vista Previa A4 Interactiva 100% Despejada:**
    * Representación proporcional a la hoja A4 en pantalla que refleja en tiempo real la disposición seleccionada, número de filas, rotaciones, desplazamientos, zoom y estilos.
    * **Sin carteles flotantes molestos:** La superficie de la hoja se mantiene completamente despejada y limpia, sin textos ni líneas intermedias que interfieran con la visión de las fotos.
@@ -91,7 +106,7 @@ La disposición geométrica cumple rigurosamente con los estándares internacion
 8. **Descarga Directa en PDF a Tamaño Real (300 DPI):**
    * Generación instantánea mediante `jsPDF` con unidades milimétricas exactas y nomenclatura descriptiva con marca de tiempo:
      `CardPDF_Documento_[YYYYMMDD_HHmmss].pdf`
-   * El botón de descarga adapta su texto en tiempo real indicando la cantidad exacta de filas y tarjetas a generar.
+   * El botón de descarga adapta su texto en tiempo real indicando la cantidad exacta de filas y tarjetas a generar (ej. *"Descargar PDF (4 filas - 8 tarjetas)"*).
 
 ---
 
@@ -100,6 +115,27 @@ La disposición geométrica cumple rigurosamente con los estándares internacion
 Al momento de mandar a imprimir el PDF generado, asegúrate de configurar tu visor o impresora con las siguientes opciones:
 * **Escala / Ajuste de página:** Seleccionar **"Tamaño real"** o **"Escala 100%"**.
 * **Desactivar:** Desmarca "Ajustar a la página" o "Reducir páginas excesivamente grandes" (estas opciones reducen las medidas físicas entre un 3% y un 5%).
+
+---
+
+## 🧪 Suite de Pruebas Automatizadas
+
+El proyecto cuenta con una batería completa de pruebas unitarias y de integración geométrica ejecutada mediante Node.js:
+
+```bash
+pnpm test
+```
+
+### Validaciones Cubiertas en los Tests (`tests/verify-specs.mjs`):
+* **Precisión dimensional ISO/IEC 7810 ID-1:** Ancho de $85.60\text{ mm}$, alto de $53.98\text{ mm}$, proporción $1.586$ y radio de curvatura de $3.18\text{ mm}$.
+* **Resolución a 300 DPI:** Dimensiones exactas de Canvas ($1011 \times 638\text{ px}$) y radio equivalente ($37.6\text{ px}$).
+* **Geometría y separaciones A4:** Comprobación de márgenes, espaciado entre fotos ($12.02\text{ mm}$ y $6.80\text{ mm}$) y separación de guillotinado ($17.04\text{ mm}$ y $16.36\text{ mm}$).
+* **Generación de PDF en memoria:** Emisión y cálculo de bytes de documentos en modo vertical (1 y 2 juegos) y modo horizontal (1 y 4 filas / 8 tarjetas).
+* **Seguridad y formatos de archivo:**
+  * Validación de formatos soportados: `.jpg`, `.jpeg`, `.png`, `.webp` (incluyendo extensiones y tipos MIME en mayúsculas o con atributos adicionales).
+  * Rechazo estricto de formatos no seguros: `.svg`, `.gif`, `.bmp`, `.pdf`, `.js`, y archivos maliciosos con extensiones simuladas.
+  * Verificación de límites de peso por archivo (aceptación de $\le 20\text{ MB}$, rechazo de $> 20\text{ MB}$).
+* **Matemática de UX Clamping:** Limitación dinámica de paneo horizontal y vertical según el nivel de zoom y rotación de la tarjeta.
 
 ---
 
@@ -125,7 +161,7 @@ pnpm run build
 # 4. Previsualizar la compilación de producción
 pnpm run preview
 
-# 5. Ejecutar la suite de pruebas geométricas y de PDF
+# 5. Ejecutar la suite de pruebas geométricas, de seguridad y de PDF
 pnpm test
 ```
 
@@ -136,6 +172,8 @@ pnpm test
 ```text
 cardpdf/
 ├── src/
+│   ├── components/
+│   │   └── CardPanel.astro   # Componente modular para las tarjetas de Frente y Dorso
 │   ├── layouts/
 │   │   └── Layout.astro      # Plantilla base, cabecera moderna, badges y favicon SVG
 │   ├── pages/
@@ -144,10 +182,12 @@ cardpdf/
 │   │   └── global.css        # Configuración base e importación de Tailwind CSS v4
 │   └── utils/
 │       ├── constants.ts      # Medidas geométricas ID-1 (mm y px a 300 DPI) y layout A4
-│       ├── imageProcessor.ts # Motor Canvas: esquinas 3.18mm, rotación, pan, zoom y filtros
+│       ├── imageProcessor.ts # Motor Canvas: esquinas 3.18mm, rotación, pan, zoom y validación
 │       └── pdfGenerator.ts   # Generador milimétrico con jsPDF y escala 100%
+├── public/
+│   └── _headers              # Cabeceras HTTP de seguridad estricta (CSP, HSTS, X-Frame-Options)
 ├── tests/
-│   └── verify-specs.mjs      # Test unitario automatizado de medidas y generación PDF
+│   └── verify-specs.mjs      # Test unitario automatizado de medidas, seguridad y generación PDF
 ├── astro.config.mjs          # Configuración de Astro con plugin Tailwind CSS de Vite
 ├── package.json              # Scripts y manifiesto de dependencias
 ├── pnpm-workspace.yaml       # Políticas de seguridad pnpm para ejecución de scripts

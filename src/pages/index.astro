@@ -417,9 +417,9 @@ import { CARD_CONFIG } from '../utils/constants';
 </Layout>
 
 <script>
-  import { loadFileAsImage, renderCardToCanvas, clampCardOffsets, type CardState } from '../utils/imageProcessor';
+  import { loadFileAsImage, renderCardToCanvas, clampCardOffsets, validateImageFile, type CardState } from '../utils/imageProcessor';
   import { generateAndDownloadPdf } from '../utils/pdfGenerator';
-  import { CARD_CONFIG, FILE_LIMITS, type ColorMode, type LayoutMode, type HorizontalRowCount } from '../utils/constants';
+  import { CARD_CONFIG, type ColorMode, type LayoutMode, type HorizontalRowCount } from '../utils/constants';
 
   type CardSide = 'front' | 'back';
 
@@ -906,17 +906,10 @@ import { CARD_CONFIG } from '../utils/constants';
   async function handleFileSelect(file: File, side: CardSide) {
     const el = elements[side];
 
-    // Validación previa de tipo MIME
-    if (!file.type.startsWith('image/')) {
-      alert('El archivo seleccionado no es una imagen válida. Por favor selecciona un archivo JPG, PNG o WebP.');
-      el.fileInput.value = '';
-      return;
-    }
-
-    // Validación preventiva de tamaño para evitar bloqueos del navegador a 300 DPI
-    if (file.size > FILE_LIMITS.MAX_FILE_SIZE_BYTES) {
-      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-      alert(`La imagen seleccionada es demasiado pesada (${sizeMb} MB). El tamaño máximo permitido es de ${FILE_LIMITS.MAX_FILE_SIZE_MB} MB para evitar que el navegador se cuelgue al procesarla a 300 DPI.`);
+    // Validación preventiva de tipo de archivo (MIME/extensión) y tamaño
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      alert(validation.error);
       el.fileInput.value = '';
       return;
     }

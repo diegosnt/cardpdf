@@ -96,7 +96,7 @@ export function clampCardOffsets(card: CardState): void {
 }
 
 /**
- * Procesa una imagen de DNI en un Canvas de alta resolución (300 DPI)
+ * Procesa una imagen de tarjeta o credencial en un Canvas de alta resolución (300 DPI)
  * aplicando recorte de esquinas redondeadas (3.18 mm), rotación, zoom y modo de color.
  * 
  * IMPORTANTE: Rellena explícitamente las 4 esquinas exteriores con blanco puro (#ffffff)
@@ -234,18 +234,81 @@ function applyColorFilter(
   ctx.putImageData(imgData, 0, 0);
 }
 
+export interface FileValidationResult {
+  valid: boolean;
+  error?: string;
+}
+
+/**
+ * Valida si un archivo o descriptor de archivo tiene un tipo MIME y/o extensión permitida.
+ * Filtra formatos no soportados como SVG (que pueden contaminar el Canvas), GIF, TIFF, BMP, PDF, etc.
+ */
+export function isValidImageFileType(file: { type?: string; name?: string }): boolean {
+  if (!file) return false;
+
+  const rawMime = (file.type || '').trim().toLowerCase();
+  const mime = rawMime.split(';')[0].trim();
+  const name = (file.name || '').trim();
+  const extension = name.includes('.') ? name.split('.').pop()!.toLowerCase() : '';
+
+  // Si no se especifica ni tipo MIME ni extensión, no es válido
+  if (!mime && !extension) return false;
+
+  const allowedMimes: readonly string[] = FILE_LIMITS.ALLOWED_MIME_TYPES;
+  const allowedExts: readonly string[] = FILE_LIMITS.ALLOWED_EXTENSIONS;
+
+  // Si tiene tipo MIME especificado, debe coincidir estrictamente con los soportados
+  if (mime && !allowedMimes.includes(mime)) {
+    return false;
+  }
+
+  // Si tiene extensión en su nombre de archivo, debe coincidir estrictamente con las soportadas
+  if (extension && !allowedExts.includes(extension)) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Valida integralmente un archivo de imagen (tipo MIME/extensión permitida y límite de tamaño)
+ */
+export function validateImageFile(file: File): FileValidationResult {
+  if (!file) {
+    return {
+      valid: false,
+      error: 'No se ha seleccionado ningún archivo.',
+    };
+  }
+
+  if (!isValidImageFileType(file)) {
+    return {
+      valid: false,
+      error: 'El archivo seleccionado no es un formato compatible. Por favor selecciona una imagen JPG, PNG o WebP.',
+    };
+  }
+
+  if (file.size > FILE_LIMITS.MAX_FILE_SIZE_BYTES) {
+    const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+    return {
+      valid: false,
+      error: `El archivo es demasiado pesado (${sizeMb} MB). El tamaño máximo permitido es de ${FILE_LIMITS.MAX_FILE_SIZE_MB} MB para evitar que el navegador se congele al procesarla.`,
+    };
+  }
+
+  return { valid: true };
+}
+
 /**
  * Carga un File o Blob como HTMLImageElement
  */
 export function loadFileAsImage(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    if (!file.type.startsWith('image/')) {
-      return reject(new Error('El archivo seleccionado no es una imagen válida. Selecciona un archivo JPG, PNG o WebP.'));
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      return reject(new Error(validation.error));
     }
-    if (file.size > FILE_LIMITS.MAX_FILE_SIZE_BYTES) {
-      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-      return reject(new Error(`El archivo es demasiado pesado (${sizeMb} MB). El tamaño máximo permitido es de ${FILE_LIMITS.MAX_FILE_SIZE_MB} MB para evitar que el navegador se congele al procesarla.`));
-    }
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();

@@ -115,6 +115,3 @@ export async function generateAndDownloadPdf(options: GeneratePdfOptions): Promi
 
   return filename;
 }
-
-// Alias retrocompatible
-export const generateAndDownloadDniPdf = generateAndDownloadPdf;
