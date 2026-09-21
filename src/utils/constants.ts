@@ -22,13 +22,33 @@ export const CARD_CONFIG = {
   A4_WIDTH_MM: 210.0,
   A4_HEIGHT_MM: 297.0,
 
-  // Disposición matemática en A4
+  // Disposición matemática en A4 (Juego 1)
   // Centrado horizontal: (210 - 85.60) / 2 = 62.20 mm
   POS_X_MM: 62.20,
-  // Frente elevado en la parte superior (no centrado verticalmente)
-  FRONT_POS_Y_MM: 35.0,
-  // Dorso ubicado verticalmente debajo con separación de 26.02 mm
-  BACK_POS_Y_MM: 115.0,
+  // Frente ubicado en la zona superior de la primera mitad
+  FRONT_POS_Y_MM: 20.0,
+  // Dorso ubicado debajo con separación de 12.02 mm
+  BACK_POS_Y_MM: 86.0,
+
+  // Disposición matemática en A4 (Juego 2 - Copia idéntica en mitad inferior)
+  // Separación entre juegos: 17.04 mm (centrada sobre el eje medio de 148.5 mm)
+  SET2_FRONT_POS_Y_MM: 157.02,
+  SET2_BACK_POS_Y_MM: 223.02,
+
+  // Disposición matemática en A4 (Horizontal: Una al lado de la otra)
+  // Márgenes laterales: 16.00 mm | Separación horizontal: 6.80 mm
+  // Eje central: (101.60 + 108.40) / 2 = 105.00 mm (centro exacto de A4)
+  HORIZ_FRONT_POS_X_MM: 16.00,
+  HORIZ_BACK_POS_X_MM: 108.40,
+  HORIZ_SPACING_MM: 6.80,
+
+  // Filas en horizontal (hasta 4 filas por hoja A4)
+  // Márgenes superior e inferior: 16.00 mm | Separación uniforme entre filas: 16.36 mm
+  // Eje medio A4 (148.50 mm) centrado exactamente entre fila 2 y fila 3
+  HORIZ_ROW_POS_Y_MM: [16.00, 86.34, 156.68, 227.02] as const,
+  HORIZ_POS_Y_MM: 16.00, // Fila 1
+  HORIZ_SET2_POS_Y_MM: 86.34, // Fila 2
+  HORIZ_ROW_SPACING_MM: 16.36,
 
   // Resolución de renderizado en Canvas (300 DPI para impresión nítida 100%)
   TARGET_DPI: 300,
@@ -50,6 +70,8 @@ export const CARD_CONFIG = {
 export const DNI_CONFIG = CARD_CONFIG;
 
 export type ColorMode = 'original' | 'grayscale' | 'photocopy';
+export type LayoutMode = 'vertical' | 'horizontal';
+export type HorizontalRowCount = 1 | 2 | 3 | 4;
 
 /**
  * Límites de seguridad y formatos permitidos para la carga de imágenes

@@ -32,22 +32,35 @@ El procesamiento de documentos personales y credenciales requiere las máximas g
 
 ## 📐 Especificaciones Técnicas y Geometría
 
-La disposición geométrica cumple rigurosamente con los estándares internacionales para documentos tipo tarjeta:
+La disposición geométrica cumple rigurosamente con los estándares internacionales para documentos tipo tarjeta y optimización en papel **A4 ($210.00 \times 297.00\text{ mm}$)**:
 
+### Medidas Base del Documento (Norma ISO/IEC 7810 ID-1 / CR80)
 | Parámetro | Medida Oficial | Implementación en CardPDF |
 | :--- | :--- | :--- |
 | **Estándar de tarjeta** | ISO/IEC 7810 (ID-1 / CR80) | Universal (DNI, licencias, cédulas, credenciales) |
-| **Ancho físico** | `85.60 mm` | `85.60 mm` exacto |
-| **Alto físico** | `53.98 mm` | `53.98 mm` exacto |
+| **Ancho físico** | `85.60 mm` | **$85.60\text{ mm}$** exacto |
+| **Alto físico** | `53.98 mm` | **$53.98\text{ mm}$** exacto |
 | **Proporción de aspecto** | $85.60 / 53.98$ | **$1.586$** exacto |
-| **Radio de curvatura** | `3.18 mm` | Recorte por clipping path de $3.18\text{ mm}$ |
-| **Hoja de salida** | A4 Vertical | $210.00\text{ mm} \times 297.00\text{ mm}$ |
-| **Centrado horizontal (X)** | $(210 - 85.60) / 2$ | **$62.20\text{ mm}$** para ambas tarjetas |
-| **Posición vertical Frente (Y)** | Zona superior (Elevado) | **$35.00\text{ mm}$** |
-| **Posición vertical Dorso (Y)** | Debajo del frente | **$115.00\text{ mm}$** |
-| **Separación entre tarjetas** | $115 - (35 + 53.98)$ | **$26.02\text{ mm}$** |
-| **Bordes de fotografías** | Sin marcos ni líneas | Limpio 100% (sin contornos ni líneas añadidas) |
+| **Radio de curvatura** | `3.18 mm` | Recorte por clipping path de **$3.18\text{ mm}$** |
+| **Bordes de fotografías** | Sin marcos ni líneas | Limpio 100% (sin contornos ni líneas grises añadidas) |
 | **Resolución de renderizado** | Alta fidelidad gráfica | **300 DPI** ($1011 \times 638\text{ px}$ en Canvas) |
+
+### Disposición Geométrica por Modos
+
+| Parámetro Geométrico | Modo Vertical (Apiladas) | Modo Horizontal (En Paralelo / Multi-Fila) |
+| :--- | :--- | :--- |
+| **Orientación** | Tarjetas una debajo de otra | Tarjetas una al lado de la otra |
+| **Centrado Horizontal (X)** | $X = 62.20\text{ mm}$ (centrado en A4) | Frente: $X = 16.00\text{ mm}$ \| Dorso: $X = 108.40\text{ mm}$ |
+| **Márgenes Laterales** | $62.20\text{ mm}$ a cada lado | **$16.00\text{ mm}$ simétricos** a ambos lados (+23% margen) |
+| **Separación entre Fotos** | **$12.02\text{ mm}$** vertical | **$6.80\text{ mm}$** horizontal (eje medio $105.00\text{ mm}$) |
+| **Capacidad en 1 Hoja A4** | 1 o 2 juegos (hasta 4 tarjetas) | **1, 2, 3 o 4 filas** (hasta 8 tarjetas en 1 hoja) |
+| **Posición Y - Fila / Juego 1** | Frente: $20.00\text{ mm}$ \| Dorso: $86.00\text{ mm}$ | Fila 1: **$16.00\text{ mm}$** |
+| **Posición Y - Fila / Juego 2** | Frente: $157.02\text{ mm}$ \| Dorso: $223.02\text{ mm}$ | Fila 2: **$86.34\text{ mm}$** |
+| **Posición Y - Fila / Juego 3** | — | Fila 3: **$156.68\text{ mm}$** |
+| **Posición Y - Fila / Juego 4** | — | Fila 4: **$227.02\text{ mm}$** |
+| **Separación entre Filas / Juegos** | $17.04\text{ mm}$ entre juegos 1 y 2 | **$16.36\text{ mm}$ uniforme** entre todas las filas |
+| **Eje de Corte A4 ($148.50\text{ mm}$)** | Divide simétricamente juego 1 y juego 2 | Divide exactamente entre fila 2 y fila 3 (dos A5 simétricas) |
+| **Margen Inferior en Hoja A4** | $20.00\text{ mm}$ | **$16.00\text{ mm}$** (idéntico a margen superior) |
 
 ---
 
@@ -55,19 +68,30 @@ La disposición geométrica cumple rigurosamente con los estándares internacion
 
 1. **Zonas de Carga Independientes (Dropzones):**
    * Dos áreas identificadas para "Frente" y "Dorso" con soporte para arrastrar y soltar o explorador de archivos (`.jpg`, `.png`, `.webp`).
+   * Protección de seguridad contra sobrecarga (DoS) con límite configurado de **20 MB** por archivo.
 2. **Edición Rápida y Encuadre Interactivo:**
-   * **Rotación en pasos de 90°:** Permite corregir fotos tomadas en vertical u horizontal con un solo clic.
-   * **Arrastrar para centrar (Pan interactivo):** Haz clic y arrastra directamente sobre la tarjeta para encuadrar tu documento si la foto tiene margen sobrante.
-   * **Control de Zoom de Alta Precisión:** Botones **`-`** y **`+`** con pasos finos de **1% en 1% (`±0.01`)**, eliminando saltos bruscos. Admite clics individuales para ajuste milimétrico, pulsación continua (*hold-to-zoom*) para variación rápida, doble clic sobre el indicador para restablecer al 100% y botón de **Recentrado** integral (posición y zoom).
+   * **Rotación en pasos de 90°:** Corrige fotos tomadas en vertical u horizontal con un solo clic.
+   * **Arrastrar para centrar (Pan interactivo con Clamping):** Haz clic y arrastra directamente sobre la tarjeta para encuadrar tu documento. Incluye delimitación inteligente (*UX clamping*) para evitar perder la imagen fuera de los márgenes visibles, recalculado dinámicamente según zoom y rotación.
+   * **Control de Zoom de Alta Precisión:** Botones **`-`** y **`+`** con pasos finos de **1% en 1% (`±0.01`)**, eliminando saltos bruscos. Admite clics individuales para ajuste milimétrico, pulsación continua (*hold-to-zoom*) para variación rápida, doble clic sobre el indicador numérico para restablecer al 100% y botón de **Recentrado** integral (posición y zoom a valores iniciales).
 3. **Selector de Estilo de Fotocopia:**
    * **🌈 Color Real:** Preserva fielmente la fotografía original.
    * **🔘 Escala de Grises:** Conversión monocromática con ponderación de luminancia según norma ITU-R BT.601 ($Y = 0.299R + 0.587G + 0.114B$).
-   * **📄 Tóner B&N (Alto Contraste):** Emulación de fotocopiadora de tóner tradicional, limpiando fondos oscuros y reforzando textos, firma y sellos.
-4. **Vista Previa A4 en Tiempo Real:**
-   * Representación interactiva proporcional a la hoja A4 en pantalla que refleja instantáneamente rotaciones, desplazamientos, zoom y estilos.
-5. **Descarga Directa en PDF:**
-   * Generación instantánea de archivo con nomenclatura:
-     `Fotocopia_Documento_[YYYYMMDD_HHmmss].pdf`
+   * **📄 Tóner B&N (Alto Contraste):** Emulación de fotocopiadora de tóner tradicional, limpiando fondos oscuros y reforzando textos, firmas y sellos.
+4. **Selector de Disposición en la Hoja A4:**
+   * **⬇️ Una debajo de otra (Apiladas):** Posicionamiento vertical centrado ($X = 62.20\text{ mm}$) con $12.02\text{ mm}$ de separación entre fotos.
+   * **➡️ Una al lado de otra (En paralelo):** Posicionamiento horizontal con márgenes laterales ampliados de $16.00\text{ mm}$ y separación compacta de $6.80\text{ mm}$ entre frente y dorso.
+5. **Múltiples Copias y Filas en 1 Hoja:**
+   * **En modo vertical:** Tilde opcional para imprimir **2 juegos completos idénticos** (4 tarjetas: 2 frentes y 2 dorsos) en la misma hoja A4 con separación diferenciada de $17.04\text{ mm}$ para fácil guillotinado.
+   * **En modo horizontal:** Selector interactivo de **1 fila** (2 fotos), **2 filas** (4 fotos), **3 filas** (6 fotos) o **4 filas** (8 fotos) aprovechando la hoja A4 al 100% con márgenes perimetrales de $16.00\text{ mm}$ y separación vertical uniforme de $16.36\text{ mm}$.
+6. **Vista Previa A4 Interactiva 100% Despejada:**
+   * Representación proporcional a la hoja A4 en pantalla que refleja en tiempo real la disposición seleccionada, número de filas, rotaciones, desplazamientos, zoom y estilos.
+   * **Sin carteles flotantes molestos:** La superficie de la hoja se mantiene completamente despejada y limpia, sin textos ni líneas intermedias que interfieran con la visión de las fotos.
+7. **Botón de Reinicio para Generar Otro PDF:**
+   * Botón dedicado que permite restablecer completamente la interfaz (limpieza de imágenes, zoom, rotaciones, modos de color y disposición) con un solo clic, sin necesidad de recargar la página (*F5*).
+8. **Descarga Directa en PDF a Tamaño Real (300 DPI):**
+   * Generación instantánea mediante `jsPDF` con unidades milimétricas exactas y nomenclatura descriptiva con marca de tiempo:
+     `CardPDF_Documento_[YYYYMMDD_HHmmss].pdf`
+   * El botón de descarga adapta su texto en tiempo real indicando la cantidad exacta de filas y tarjetas a generar.
 
 ---
 
@@ -131,32 +155,6 @@ cardpdf/
 ├── tsconfig.json             # Configuración TypeScript en modo estricto
 └── README.md                 # Documentación técnica del proyecto
 ```
-
----
-
-## 🧭 Tareas Pendientes / Mejoras
-
-Relevado a partir de un análisis interno del proyecto (seguridad, dependencias y calidad de código). Pendiente de priorizar e implementar.
-
-### 🔒 Seguridad
-- [x] Actualizar `jspdf` de `2.5.2` a `4.x`: la versión actual reportaba varias vulnerabilidades en auditoría (incluida una crítica de path traversal/LFI y un ReDoS/DoS). Actualizado a `4.2.1` — `pnpm audit` ya no reporta advisories de `jspdf` ni `dompurify`, y se verificó que `pnpm test` y la generación de PDF (frente/dorso) siguen funcionando correctamente.
-- [x] Agregar cabeceras de seguridad (`public/_headers` para Cloudflare Pages) con CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `HSTS` y cache inmutable para assets, coherente con la promesa de privacidad total.
-- [x] Agregar el archivo `LICENSE` (MIT) al repositorio: el README lo referencia y ahora cuenta con la licencia MIT oficial y el campo correspondiente en `package.json`.
-- [x] Validar tamaño máximo de archivo en la carga de imágenes (`handleFileSelect` y `loadFileAsImage`) limitado a 20 MB (`FILE_LIMITS`), con feedback claro en la UI y prevención de bloqueos por DoS/memoria al procesar a 300 DPI.
-
-### 📦 Dependencias
-- [x] Verificado tras actualizar `jspdf` a `4.2.1`: `html2canvas` y `dompurify` siguen generando chunks separados en `dist/_astro/` (import dinámico interno de jsPDF para su método `.html()`, que no usamos), pero `dist/index.html` no los referencia ni precarga — el navegador nunca los descarga en tiempo de ejecución. No es peso muerto real para el usuario; solo archivos de más en el build.
-- [x] Mantener Astro actualizado a la última versión estable (actualizado a `7.3.3`): `pnpm audit` pasó a 0 vulnerabilidades conocidas en todo el árbol de dependencias, y el tiempo de compilación estática se redujo a ~1.1s.
-
-### 🧹 Calidad de código
-- [x] Hacer que `tests/verify-specs.mjs` importe las constantes reales desde `src/utils/constants.ts` en lugar de duplicarlas a mano, garantizando que el test detecte regresiones reales en la geometría, centrado y resolución.
-- [x] Revisar el parámetro `includeBorder` de `renderCardToCanvas`: se eliminó el código muerto de dibujo de borde en `imageProcessor.ts`, la opción en `pdfGenerator.ts` y las constantes asociadas, manteniendo la salida fotográfica limpia sin marcos artificiales.
-- [x] Eliminar la variable `includeBorder` sin uso en `index.astro`.
-- [x] Evaluar refactorizar `index.astro` para reducir la duplicación casi 1:1 entre los bloques "Frente" y "Dorso" (markup y handlers): se extrajo el markup a `src/components/CardPanel.astro` parametrizado por `side`, y se unificaron los manejadores de eventos (drag & drop, zoom, paneo, rotación, carga y remoción de archivos) en bucle sobre `['front', 'back']`, reduciendo más de 250 líneas y eliminando la duplicación de lógica.
-- [x] Configuración de CI (GitHub Actions): evaluado y descartado por decisión de diseño; la ejecución de pruebas y chequeos se mantiene en el entorno local del desarrollador (`pnpm test` y `pnpm run build`), evitando workflows remotos innecesarios.
-
-### 🎨 UX
-- [ ] Limitar el rango de paneo (arrastrar imagen) para evitar que la foto quede completamente fuera de cuadro sin más indicio que el botón "Recentrar".
 
 ---
 

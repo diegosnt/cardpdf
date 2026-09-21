@@ -106,19 +106,125 @@ import { CARD_CONFIG } from '../utils/constants';
           </button>
         </div>
 
+        <!-- Selector de Disposición en la Hoja A4 -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+            <span>📐 Disposición en la Hoja A4</span>
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <button 
+              type="button" 
+              data-layout="vertical" 
+              class="layout-mode-btn px-3 py-2.5 rounded-xl border bg-sky-500/15 border-sky-500 text-white text-left flex flex-col gap-0.5 transition-all cursor-pointer"
+            >
+              <span class="text-xs font-bold flex items-center gap-1.5">
+                <span>⬇️ Una debajo de otra</span>
+              </span>
+              <span class="text-[10px] text-slate-400">Apiladas verticalmente</span>
+            </button>
 
-        <!-- Botón de Descarga Principal -->
-        <button 
-          type="button" 
-          id="btn-download-pdf" 
-          disabled
-          class="w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-sky-500/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
-        >
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <span id="btn-download-text">Descargar Fotocopia PDF (A4 - 100%)</span>
-        </button>
+            <button 
+              type="button" 
+              data-layout="horizontal" 
+              class="layout-mode-btn px-3 py-2.5 rounded-xl border border-slate-800 hover:border-slate-700 text-left flex flex-col gap-0.5 transition-all text-slate-300 cursor-pointer"
+            >
+              <span class="text-xs font-bold flex items-center gap-1.5">
+                <span>➡️ Una al lado de otra</span>
+              </span>
+              <span class="text-[10px] text-slate-400">En paralelo horizontal</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Opción Vertical: Imprimir 2 juegos iguales en la misma hoja -->
+        <div id="container-vertical-duplicate">
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-all select-none group">
+            <input 
+              type="checkbox" 
+              id="checkbox-duplicate-set" 
+              class="w-4 h-4 rounded border-slate-700 text-sky-500 focus:ring-sky-500 focus:ring-offset-slate-900 bg-slate-800 cursor-pointer accent-sky-500"
+            />
+            <div class="flex-1">
+              <span class="text-xs font-bold text-slate-200 group-hover:text-white flex items-center gap-1.5">
+                <span>🖨️ Imprimir 2 juegos iguales</span>
+                <span class="text-[10px] font-normal px-1.5 py-0.2 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">2 copias</span>
+              </span>
+              <span class="text-[11px] text-slate-400 block mt-0.5">Duplica frente y dorso en la mitad inferior de la misma hoja A4</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Opción Horizontal: Cantidad de Filas de Imágenes (1, 2, 3 o 4 filas) -->
+        <div id="container-horizontal-rows" class="hidden space-y-2 p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+              <span>📑 Filas en la hoja A4:</span>
+            </span>
+            <span id="horiz-rows-badge" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
+              1 juego (2 fotos)
+            </span>
+          </div>
+          <div class="grid grid-cols-4 gap-1.5 pt-0.5">
+            <button
+              type="button"
+              data-rows="1"
+              class="horiz-rows-btn py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer bg-sky-500 text-white shadow-xs"
+            >
+              1 fila
+            </button>
+            <button
+              type="button"
+              data-rows="2"
+              class="horiz-rows-btn py-1.5 px-2 rounded-lg text-xs font-medium transition-all cursor-pointer bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/50"
+            >
+              2 filas
+            </button>
+            <button
+              type="button"
+              data-rows="3"
+              class="horiz-rows-btn py-1.5 px-2 rounded-lg text-xs font-medium transition-all cursor-pointer bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/50"
+            >
+              3 filas
+            </button>
+            <button
+              type="button"
+              data-rows="4"
+              class="horiz-rows-btn py-1.5 px-2 rounded-lg text-xs font-medium transition-all cursor-pointer bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/50"
+            >
+              4 filas
+            </button>
+          </div>
+          <span class="text-[11px] text-slate-400 block">Elige entre 1 y 4 filas paralelas completas en la hoja A4</span>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="space-y-2">
+          <!-- Botón de Descarga Principal -->
+          <button 
+            type="button" 
+            id="btn-download-pdf" 
+            disabled
+            class="w-full py-3.5 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-200 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white shadow-sky-500/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span id="btn-download-text">Descargar Fotocopia PDF (A4 - 100%)</span>
+          </button>
+
+          <!-- Botón de Reinicio para generar otro PDF -->
+          <button 
+            type="button" 
+            id="btn-reset-all" 
+            disabled
+            class="w-full py-2.5 px-4 rounded-xl font-medium text-xs flex items-center justify-center gap-2 transition-all duration-200 text-slate-300 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-700/60 hover:border-slate-600 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Reiniciar para generar otro PDF</span>
+          </button>
+        </div>
 
       </div>
 
@@ -134,9 +240,10 @@ import { CARD_CONFIG } from '../utils/constants';
           <div>• Radio curvatura: <span class="text-slate-200 font-mono">3.18 mm</span></div>
           <div>• Hoja de salida: <span class="text-slate-200 font-mono">A4 (210 × 297 mm)</span></div>
           <div>• Centrado horizontal: <span class="text-slate-200 font-mono">X = 62.20 mm</span></div>
-          <div>• Posición Frente: <span class="text-slate-200 font-mono">Y = 35.00 mm (Superior)</span></div>
-          <div>• Posición Dorso: <span class="text-slate-200 font-mono">Y = 115.00 mm</span></div>
-          <div>• Separación vertical: <span class="text-slate-200 font-mono">26.02 mm</span></div>
+          <div>• Posición Frente: <span class="text-slate-200 font-mono">Y = 20.00 mm (Superior)</span></div>
+          <div>• Posición Dorso: <span class="text-slate-200 font-mono">Y = 86.00 mm</span></div>
+          <div>• Separación entre fotos: <span class="text-slate-200 font-mono">12.02 mm</span></div>
+          <div>• Separación entre juegos: <span class="text-slate-200 font-mono">17.04 mm (Doble juego)</span></div>
           <div>• Resolución: <span class="text-slate-200 font-mono">300 DPI (100% escala)</span></div>
         </div>
       </div>
@@ -173,11 +280,11 @@ import { CARD_CONFIG } from '../utils/constants';
               A4 • 210 × 297 mm
             </div>
 
-            <!-- TARJETA FRENTE en la hoja (Elevada Y = 35.00 mm -> 11.785%) -->
+            <!-- TARJETA FRENTE en la hoja (Elevada Y = 20.00 mm -> 6.734%) -->
             <div 
               id="sheet-card-front"
               class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
-              style="left: 29.619%; top: 11.785%; width: 40.762%; height: 18.175%;"
+              style="left: 29.619%; top: 6.734%; width: 40.762%; height: 18.175%;"
             >
               <canvas id="canvas-preview-front" class="w-full h-full object-cover hidden cursor-grab active:cursor-grabbing"></canvas>
               
@@ -187,11 +294,11 @@ import { CARD_CONFIG } from '../utils/constants';
               </div>
             </div>
 
-            <!-- TARJETA DORSO en la hoja (Elevada Y = 115.00 mm -> 38.721%) -->
+            <!-- TARJETA DORSO en la hoja (Elevada Y = 86.00 mm -> 28.956%) -->
             <div 
               id="sheet-card-back"
               class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
-              style="left: 29.619%; top: 38.721%; width: 40.762%; height: 18.175%;"
+              style="left: 29.619%; top: 28.956%; width: 40.762%; height: 18.175%;"
             >
               <canvas id="canvas-preview-back" class="w-full h-full object-cover hidden cursor-grab active:cursor-grabbing"></canvas>
               
@@ -201,11 +308,97 @@ import { CARD_CONFIG } from '../utils/constants';
               </div>
             </div>
 
-            <!-- Cota de separación matemática (34.34%) -->
-            <div class="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none" style="top: 32.5%;">
-              <span class="text-[7px] text-slate-400 bg-white/95 px-1.5 py-0.5 rounded shadow-xs border border-slate-200">
-                Separación: 26.02 mm
-              </span>
+
+
+
+            <!-- JUEGO 2 (Copia 2 / Fila 2 en horizontal) -->
+            <div id="sheet-set2-container" class="hidden">
+              <!-- TARJETA FRENTE 2 en la hoja -->
+              <div 
+                id="sheet-card-front-2"
+                class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
+                style="left: 29.619%; top: 52.869%; width: 40.762%; height: 18.175%;"
+              >
+                <canvas id="canvas-preview-front-2" class="w-full h-full object-cover hidden"></canvas>
+                
+                <div id="placeholder-preview-front-2" class="text-center p-1">
+                  <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 block">FRENTE</span>
+                  <span class="text-[7px] text-slate-300 font-mono block">Copia 2</span>
+                </div>
+              </div>
+
+              <!-- TARJETA DORSO 2 en la hoja -->
+              <div 
+                id="sheet-card-back-2"
+                class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
+                style="left: 29.619%; top: 75.091%; width: 40.762%; height: 18.175%;"
+              >
+                <canvas id="canvas-preview-back-2" class="w-full h-full object-cover hidden"></canvas>
+                
+                <div id="placeholder-preview-back-2" class="text-center p-1">
+                  <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 block">DORSO</span>
+                  <span class="text-[7px] text-slate-300 font-mono block">Copia 2</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- JUEGO 3 (Fila 3 en horizontal) -->
+            <div id="sheet-row3-container" class="hidden">
+              <!-- TARJETA FRENTE 3 -->
+              <div 
+                id="sheet-card-front-3"
+                class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
+                style="left: 7.619%; top: 52.754%; width: 40.762%; height: 18.175%;"
+              >
+                <canvas id="canvas-preview-front-3" class="w-full h-full object-cover hidden"></canvas>
+                <div id="placeholder-preview-front-3" class="text-center p-1">
+                  <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 block">FRENTE</span>
+                  <span class="text-[7px] text-slate-300 font-mono block">Copia 3</span>
+                </div>
+              </div>
+
+              <!-- TARJETA DORSO 3 -->
+              <div 
+                id="sheet-card-back-3"
+                class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
+                style="left: 51.619%; top: 52.754%; width: 40.762%; height: 18.175%;"
+              >
+                <canvas id="canvas-preview-back-3" class="w-full h-full object-cover hidden"></canvas>
+                <div id="placeholder-preview-back-3" class="text-center p-1">
+                  <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 block">DORSO</span>
+                  <span class="text-[7px] text-slate-300 font-mono block">Copia 3</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- JUEGO 4 (Fila 4 en horizontal) -->
+            <div id="sheet-row4-container" class="hidden">
+              <!-- TARJETA FRENTE 4 -->
+              <div 
+                id="sheet-card-front-4"
+                class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
+                style="left: 7.619%; top: 76.438%; width: 40.762%; height: 18.175%;"
+              >
+                <canvas id="canvas-preview-front-4" class="w-full h-full object-cover hidden"></canvas>
+                <div id="placeholder-preview-front-4" class="text-center p-1">
+                  <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 block">FRENTE</span>
+                  <span class="text-[7px] text-slate-300 font-mono block">Copia 4</span>
+                </div>
+              </div>
+
+              <!-- TARJETA DORSO 4 -->
+              <div 
+                id="sheet-card-back-4"
+                class="absolute rounded-[4px] sm:rounded-[6px] overflow-hidden border border-dashed border-slate-300 transition-all flex items-center justify-center bg-slate-50"
+                style="left: 51.619%; top: 76.438%; width: 40.762%; height: 18.175%;"
+              >
+                <canvas id="canvas-preview-back-4" class="w-full h-full object-cover hidden"></canvas>
+                <div id="placeholder-preview-back-4" class="text-center p-1">
+                  <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 block">DORSO</span>
+                  <span class="text-[7px] text-slate-300 font-mono block">Copia 4</span>
+                </div>
+              </div>
             </div>
 
           </div>
@@ -224,9 +417,9 @@ import { CARD_CONFIG } from '../utils/constants';
 </Layout>
 
 <script>
-  import { loadFileAsImage, renderCardToCanvas, type CardState } from '../utils/imageProcessor';
+  import { loadFileAsImage, renderCardToCanvas, clampCardOffsets, type CardState } from '../utils/imageProcessor';
   import { generateAndDownloadPdf } from '../utils/pdfGenerator';
-  import { CARD_CONFIG, FILE_LIMITS, type ColorMode } from '../utils/constants';
+  import { CARD_CONFIG, FILE_LIMITS, type ColorMode, type LayoutMode, type HorizontalRowCount } from '../utils/constants';
 
   type CardSide = 'front' | 'back';
 
@@ -266,6 +459,15 @@ import { CARD_CONFIG } from '../utils/constants';
     canvasPreview: HTMLCanvasElement;
     placeholderPreview: HTMLElement;
     sheetCard: HTMLElement;
+    canvasPreview2: HTMLCanvasElement | null;
+    placeholderPreview2: HTMLElement | null;
+    sheetCard2: HTMLElement | null;
+    canvasPreview3: HTMLCanvasElement | null;
+    placeholderPreview3: HTMLElement | null;
+    sheetCard3: HTMLElement | null;
+    canvasPreview4: HTMLCanvasElement | null;
+    placeholderPreview4: HTMLElement | null;
+    sheetCard4: HTMLElement | null;
   }
 
   function getSideElements(side: CardSide): SideElements {
@@ -286,6 +488,15 @@ import { CARD_CONFIG } from '../utils/constants';
       canvasPreview: document.getElementById(`canvas-preview-${side}`) as HTMLCanvasElement,
       placeholderPreview: document.getElementById(`placeholder-preview-${side}`) as HTMLElement,
       sheetCard: document.getElementById(`sheet-card-${side}`) as HTMLElement,
+      canvasPreview2: document.getElementById(`canvas-preview-${side}-2`) as HTMLCanvasElement | null,
+      placeholderPreview2: document.getElementById(`placeholder-preview-${side}-2`) as HTMLElement | null,
+      sheetCard2: document.getElementById(`sheet-card-${side}-2`) as HTMLElement | null,
+      canvasPreview3: document.getElementById(`canvas-preview-${side}-3`) as HTMLCanvasElement | null,
+      placeholderPreview3: document.getElementById(`placeholder-preview-${side}-3`) as HTMLElement | null,
+      sheetCard3: document.getElementById(`sheet-card-${side}-3`) as HTMLElement | null,
+      canvasPreview4: document.getElementById(`canvas-preview-${side}-4`) as HTMLCanvasElement | null,
+      placeholderPreview4: document.getElementById(`placeholder-preview-${side}-4`) as HTMLElement | null,
+      sheetCard4: document.getElementById(`sheet-card-${side}-4`) as HTMLElement | null,
     };
   }
 
@@ -302,6 +513,8 @@ import { CARD_CONFIG } from '../utils/constants';
   };
 
   let currentColorMode: ColorMode = 'original';
+  let currentLayout: LayoutMode = 'vertical';
+  let currentHorizontalRows: HorizontalRowCount = 1;
 
   // Parámetros de Zoom (1% por paso para ajuste fino sin saltos de 5 en 5)
   const MIN_ZOOM = 0.5; // 50%
@@ -311,61 +524,265 @@ import { CARD_CONFIG } from '../utils/constants';
   // Elementos Globales
   const btnDownload = document.getElementById('btn-download-pdf') as HTMLButtonElement;
   const btnDownloadText = document.getElementById('btn-download-text') as HTMLElement;
+  const btnResetAll = document.getElementById('btn-reset-all') as HTMLButtonElement | null;
+  const checkboxDuplicateSet = document.getElementById('checkbox-duplicate-set') as HTMLInputElement | null;
+  const containerVerticalDuplicate = document.getElementById('container-vertical-duplicate') as HTMLElement | null;
+  const containerHorizontalRows = document.getElementById('container-horizontal-rows') as HTMLElement | null;
+  const horizRowsButtons = document.querySelectorAll<HTMLButtonElement>('.horiz-rows-btn');
+  const horizRowsBadge = document.getElementById('horiz-rows-badge') as HTMLElement | null;
+  const sheetSet2Container = document.getElementById('sheet-set2-container') as HTMLElement | null;
+  const sheetRow3Container = document.getElementById('sheet-row3-container') as HTMLElement | null;
+  const sheetRow4Container = document.getElementById('sheet-row4-container') as HTMLElement | null;
   const colorModeButtons = document.querySelectorAll<HTMLButtonElement>('.color-mode-btn');
+  const layoutModeButtons = document.querySelectorAll<HTMLButtonElement>('.layout-mode-btn');
+
+  // Actualiza la disposición visual en la hoja A4 según el layout seleccionado
+  function updateLayoutDisplay() {
+    const isHoriz = currentLayout === 'horizontal';
+
+    // Tarjeta Frente 1
+    const cardFront = elements.front.sheetCard;
+    if (cardFront) {
+      cardFront.style.left = isHoriz ? '7.619%' : '29.619%';
+      cardFront.style.top = isHoriz ? '5.387%' : '6.734%';
+    }
+
+    // Tarjeta Dorso 1
+    const cardBack = elements.back.sheetCard;
+    if (cardBack) {
+      cardBack.style.left = isHoriz ? '51.619%' : '29.619%';
+      cardBack.style.top = isHoriz ? '5.387%' : '28.956%';
+    }
+
+    // Tarjeta Frente 2
+    const cardFront2 = elements.front.sheetCard2;
+    if (cardFront2) {
+      cardFront2.style.left = isHoriz ? '7.619%' : '29.619%';
+      cardFront2.style.top = isHoriz ? '29.071%' : '52.869%';
+    }
+
+    // Tarjeta Dorso 2
+    const cardBack2 = elements.back.sheetCard2;
+    if (cardBack2) {
+      cardBack2.style.left = isHoriz ? '51.619%' : '29.619%';
+      cardBack2.style.top = isHoriz ? '29.071%' : '75.091%';
+    }
+
+    // Tarjeta Frente 3 y Dorso 3 (Fila 3 en horizontal)
+    const cardFront3 = elements.front.sheetCard3;
+    if (cardFront3) {
+      cardFront3.style.left = '7.619%';
+      cardFront3.style.top = '52.754%';
+    }
+    const cardBack3 = elements.back.sheetCard3;
+    if (cardBack3) {
+      cardBack3.style.left = '51.619%';
+      cardBack3.style.top = '52.754%';
+    }
+
+    // Tarjeta Frente 4 y Dorso 4 (Fila 4 en horizontal)
+    const cardFront4 = elements.front.sheetCard4;
+    if (cardFront4) {
+      cardFront4.style.left = '7.619%';
+      cardFront4.style.top = '76.438%';
+    }
+    const cardBack4 = elements.back.sheetCard4;
+    if (cardBack4) {
+      cardBack4.style.left = '51.619%';
+      cardBack4.style.top = '76.438%';
+    }
+
+    // Visibilidad de filas / juegos en la hoja A4
+    if (isHoriz) {
+      // En horizontal: 1, 2, 3 o 4 filas
+      if (sheetSet2Container) {
+        if (currentHorizontalRows >= 2) {
+          sheetSet2Container.classList.remove('hidden');
+        } else {
+          sheetSet2Container.classList.add('hidden');
+        }
+      }
+      if (sheetRow3Container) {
+        if (currentHorizontalRows >= 3) {
+          sheetRow3Container.classList.remove('hidden');
+        } else {
+          sheetRow3Container.classList.add('hidden');
+        }
+      }
+      if (sheetRow4Container) {
+        if (currentHorizontalRows >= 4) {
+          sheetRow4Container.classList.remove('hidden');
+        } else {
+          sheetRow4Container.classList.add('hidden');
+        }
+      }
+    } else {
+      // En vertical: duplicado si checkbox está marcado
+      const isDuplicate = checkboxDuplicateSet?.checked ?? false;
+      if (sheetSet2Container) {
+        if (isDuplicate) {
+          sheetSet2Container.classList.remove('hidden');
+        } else {
+          sheetSet2Container.classList.add('hidden');
+        }
+      }
+      if (sheetRow3Container) {
+        sheetRow3Container.classList.add('hidden');
+      }
+      if (sheetRow4Container) {
+        sheetRow4Container.classList.add('hidden');
+      }
+    }
+  }
+
+  // Actualiza la interfaz del selector de filas en horizontal
+  function updateHorizRowsUI(rows: HorizontalRowCount) {
+    currentHorizontalRows = rows;
+    horizRowsButtons.forEach(btn => {
+      const btnRows = Number(btn.getAttribute('data-rows')) as HorizontalRowCount;
+      if (btnRows === rows) {
+        btn.classList.remove('bg-slate-800/80', 'text-slate-300', 'border', 'border-slate-700/50');
+        btn.classList.add('bg-sky-500', 'text-white', 'font-bold', 'shadow-xs');
+      } else {
+        btn.classList.remove('bg-sky-500', 'text-white', 'font-bold', 'shadow-xs');
+        btn.classList.add('bg-slate-800/80', 'text-slate-300', 'border', 'border-slate-700/50');
+      }
+    });
+
+    if (horizRowsBadge) {
+      const labels: Record<HorizontalRowCount, string> = {
+        1: '1 juego (2 fotos)',
+        2: '2 juegos (4 fotos)',
+        3: '3 juegos (6 fotos)',
+        4: '4 juegos (8 fotos)',
+      };
+      horizRowsBadge.textContent = labels[rows];
+    }
+
+    updateLayoutDisplay();
+    updateDownloadButtonState();
+  }
 
   // Actualiza el renderizado Canvas
   async function updateCardRender(side: CardSide) {
     const card = cards[side];
     const el = elements[side];
 
+    const copies = [
+      { canvas: el.canvasPreview2, placeholder: el.placeholderPreview2, card: el.sheetCard2 },
+      { canvas: el.canvasPreview3, placeholder: el.placeholderPreview3, card: el.sheetCard3 },
+      { canvas: el.canvasPreview4, placeholder: el.placeholderPreview4, card: el.sheetCard4 },
+    ];
+
     if (!card.imageElement) {
       el.canvasPreview.classList.add('hidden');
       el.placeholderPreview.classList.remove('hidden');
       el.sheetCard.classList.remove('border-none');
       el.sheetCard.classList.add('border-dashed', 'border-slate-300');
+
+      // Limpiar también copias adicionales
+      for (const copy of copies) {
+        if (copy.canvas && copy.placeholder && copy.card) {
+          copy.canvas.classList.add('hidden');
+          copy.placeholder.classList.remove('hidden');
+          copy.card.classList.remove('border-none');
+          copy.card.classList.add('border-dashed', 'border-slate-300');
+        }
+      }
       return;
     }
 
     try {
       // Sin marcos ni líneas grises añadidas
-      const renderedCanvas = await renderCardToCanvas(card, currentColorMode);
+      const canvas = await renderCardToCanvas(card, currentColorMode);
 
-      // Miniatura en Dropzone
-      el.miniCanvas.width = renderedCanvas.width;
-      el.miniCanvas.height = renderedCanvas.height;
+      el.canvasPreview.width = canvas.width;
+      el.canvasPreview.height = canvas.height;
+      const ctx = el.canvasPreview.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(canvas, 0, 0);
+      }
+
+      el.miniCanvas.width = canvas.width;
+      el.miniCanvas.height = canvas.height;
       const miniCtx = el.miniCanvas.getContext('2d');
-      miniCtx?.drawImage(renderedCanvas, 0, 0);
-
-      // Canvas en Hoja A4
-      el.canvasPreview.width = renderedCanvas.width;
-      el.canvasPreview.height = renderedCanvas.height;
-      const prevCtx = el.canvasPreview.getContext('2d');
-      prevCtx?.drawImage(renderedCanvas, 0, 0);
+      if (miniCtx) {
+        miniCtx.clearRect(0, 0, canvas.width, canvas.height);
+        miniCtx.drawImage(canvas, 0, 0);
+      }
 
       el.canvasPreview.classList.remove('hidden');
       el.placeholderPreview.classList.add('hidden');
-      el.sheetCard.classList.remove('border-dashed', 'border-slate-300', 'border-solid', 'border-slate-400');
+      el.sheetCard.classList.remove('border-dashed', 'border-slate-300');
       el.sheetCard.classList.add('border-none');
+
+      // Actualizar también las copias 2, 3 y 4 en la hoja A4
+      for (const copy of copies) {
+        if (copy.canvas && copy.placeholder && copy.card) {
+          copy.canvas.width = canvas.width;
+          copy.canvas.height = canvas.height;
+          const copyCtx = copy.canvas.getContext('2d');
+          if (copyCtx) {
+            copyCtx.clearRect(0, 0, canvas.width, canvas.height);
+            copyCtx.drawImage(canvas, 0, 0);
+          }
+          copy.canvas.classList.remove('hidden');
+          copy.placeholder.classList.add('hidden');
+          copy.card.classList.remove('border-dashed', 'border-slate-300');
+          copy.card.classList.add('border-none');
+        }
+      }
     } catch (err) {
       console.error(`Error al procesar ${side}:`, err);
     }
   }
 
-  // Actualiza estado del botón de descarga
+  // Actualiza estado del botón de descarga y del botón de reinicio
   function updateDownloadButtonState() {
     const hasAnyImage = cards.front.imageElement !== null || cards.back.imageElement !== null;
     const hasBothImages = cards.front.imageElement !== null && cards.back.imageElement !== null;
 
     btnDownload.disabled = !hasAnyImage;
+    if (btnResetAll) {
+      btnResetAll.disabled = !hasAnyImage;
+    }
 
-    if (hasBothImages) {
-      btnDownloadText.textContent = 'Descargar Fotocopia PDF (Frente y Dorso)';
-    } else if (cards.front.imageElement !== null) {
-      btnDownloadText.textContent = 'Descargar Fotocopia PDF (Solo Frente)';
-    } else if (cards.back.imageElement !== null) {
-      btnDownloadText.textContent = 'Descargar Fotocopia PDF (Solo Dorso)';
+    if (currentLayout === 'horizontal') {
+      const rowCount = currentHorizontalRows;
+      const totalCards = rowCount * (hasBothImages ? 2 : 1);
+      if (hasBothImages) {
+        btnDownloadText.textContent = `Descargar Fotocopia PDF (${rowCount} ${rowCount === 1 ? 'Fila' : 'Filas'} • ${totalCards} Tarjetas)`;
+      } else if (cards.front.imageElement !== null) {
+        btnDownloadText.textContent = `Descargar Fotocopia PDF (${rowCount} ${rowCount === 1 ? 'Copia' : 'Copias'} Frente)`;
+      } else if (cards.back.imageElement !== null) {
+        btnDownloadText.textContent = `Descargar Fotocopia PDF (${rowCount} ${rowCount === 1 ? 'Copia' : 'Copias'} Dorso)`;
+      } else {
+        btnDownloadText.textContent = `Descargar Fotocopia PDF (${rowCount} ${rowCount === 1 ? 'Fila' : 'Filas'} • A4 100%)`;
+      }
     } else {
-      btnDownloadText.textContent = 'Descargar Fotocopia PDF (A4 - 100%)';
+      const isDuplicate = checkboxDuplicateSet?.checked ?? false;
+      if (isDuplicate) {
+        if (hasBothImages) {
+          btnDownloadText.textContent = 'Descargar Fotocopia PDF (2 Juegos • 4 Tarjetas)';
+        } else if (cards.front.imageElement !== null) {
+          btnDownloadText.textContent = 'Descargar Fotocopia PDF (2 Copias del Frente)';
+        } else if (cards.back.imageElement !== null) {
+          btnDownloadText.textContent = 'Descargar Fotocopia PDF (2 Copias del Dorso)';
+        } else {
+          btnDownloadText.textContent = 'Descargar Fotocopia PDF (A4 - 100%)';
+        }
+      } else {
+        if (hasBothImages) {
+          btnDownloadText.textContent = 'Descargar Fotocopia PDF (Frente y Dorso)';
+        } else if (cards.front.imageElement !== null) {
+          btnDownloadText.textContent = 'Descargar Fotocopia PDF (Solo Frente)';
+        } else if (cards.back.imageElement !== null) {
+          btnDownloadText.textContent = 'Descargar Fotocopia PDF (Solo Dorso)';
+        } else {
+          btnDownloadText.textContent = 'Descargar Fotocopia PDF (A4 - 100%)';
+        }
+      }
     }
   }
 
@@ -394,6 +811,7 @@ import { CARD_CONFIG } from '../utils/constants';
     if (Math.abs(newZoom - card.zoom) < 0.0001) return;
 
     card.zoom = newZoom;
+    clampCardOffsets(card);
     updateZoomDisplay(side);
     updateCardRender(side);
   }
@@ -571,6 +989,7 @@ import { CARD_CONFIG } from '../utils/constants';
       const scaleFactor = CARD_CONFIG.CANVAS_WIDTH_PX / (canvas.clientWidth || 200);
       card.offsetX += dx * scaleFactor;
       card.offsetY += dy * scaleFactor;
+      clampCardOffsets(card);
       updateCardRender(side);
     });
 
@@ -638,6 +1057,7 @@ import { CARD_CONFIG } from '../utils/constants';
     el.btnRotate.addEventListener('click', (e) => {
       e.stopPropagation();
       card.rotation = (card.rotation + 90) % 360;
+      clampCardOffsets(card);
       updateCardRender(side);
     });
 
@@ -688,7 +1108,10 @@ import { CARD_CONFIG } from '../utils/constants';
       await generateAndDownloadPdf({
         frontCard: cards.front,
         backCard: cards.back,
-        colorMode: currentColorMode
+        colorMode: currentColorMode,
+        duplicateCopies: checkboxDuplicateSet?.checked ?? false,
+        layoutMode: currentLayout,
+        horizontalRows: currentHorizontalRows,
       });
 
       btnDownloadText.textContent = originalText;
@@ -700,4 +1123,108 @@ import { CARD_CONFIG } from '../utils/constants';
       updateDownloadButtonState();
     }
   });
+
+  // Selector de Disposición en la Hoja (Vertical u Horizontal)
+  layoutModeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      layoutModeButtons.forEach(b => {
+        b.classList.remove('bg-sky-500/15', 'border-sky-500', 'text-white');
+        b.classList.add('border-slate-800', 'text-slate-300');
+      });
+
+      btn.classList.remove('border-slate-800', 'text-slate-300');
+      btn.classList.add('bg-sky-500/15', 'border-sky-500', 'text-white');
+
+      currentLayout = (btn.getAttribute('data-layout') || 'vertical') as LayoutMode;
+
+      if (currentLayout === 'horizontal') {
+        containerVerticalDuplicate?.classList.add('hidden');
+        containerHorizontalRows?.classList.remove('hidden');
+      } else {
+        containerVerticalDuplicate?.classList.remove('hidden');
+        containerHorizontalRows?.classList.add('hidden');
+      }
+
+      updateLayoutDisplay();
+      updateDownloadButtonState();
+    });
+  });
+
+  // Selector de Filas en Horizontal (1, 2, 3 o 4 filas)
+  horizRowsButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const rows = Number(btn.getAttribute('data-rows')) as HorizontalRowCount;
+      if (rows >= 1 && rows <= 4) {
+        updateHorizRowsUI(rows);
+      }
+    });
+  });
+
+  // Escuchar cambio en la opción de duplicar juego en vertical
+  if (checkboxDuplicateSet) {
+    checkboxDuplicateSet.addEventListener('change', () => {
+      const isDuplicate = checkboxDuplicateSet.checked;
+      if (sheetSet2Container) {
+        if (isDuplicate) {
+          sheetSet2Container.classList.remove('hidden');
+        } else {
+          sheetSet2Container.classList.add('hidden');
+        }
+      }
+      updateDownloadButtonState();
+    });
+  }
+
+  // Reiniciar todo para generar otro PDF
+  function resetAllCards() {
+    handleRemoveFile('front');
+    handleRemoveFile('back');
+
+    if (checkboxDuplicateSet) {
+      checkboxDuplicateSet.checked = false;
+      if (sheetSet2Container) {
+        sheetSet2Container.classList.add('hidden');
+      }
+    }
+
+    // Restaurar filas en horizontal a 1
+    updateHorizRowsUI(1);
+
+    // Restaurar disposición a vertical por defecto
+    currentLayout = 'vertical';
+    containerVerticalDuplicate?.classList.remove('hidden');
+    containerHorizontalRows?.classList.add('hidden');
+
+    layoutModeButtons.forEach(b => {
+      const isVertical = b.getAttribute('data-layout') === 'vertical';
+      if (isVertical) {
+        b.classList.remove('border-slate-800', 'text-slate-300');
+        b.classList.add('bg-sky-500/15', 'border-sky-500', 'text-white');
+      } else {
+        b.classList.remove('bg-sky-500/15', 'border-sky-500', 'text-white');
+        b.classList.add('border-slate-800', 'text-slate-300');
+      }
+    });
+    updateLayoutDisplay();
+
+    // Restaurar modo de color a 'original'
+    currentColorMode = 'original';
+    colorModeButtons.forEach(b => {
+      const isOriginal = b.getAttribute('data-mode') === 'original';
+      if (isOriginal) {
+        b.classList.remove('border-slate-800', 'text-slate-300');
+        b.classList.add('bg-sky-500/15', 'border-sky-500', 'text-white');
+      } else {
+        b.classList.remove('bg-sky-500/15', 'border-sky-500', 'text-white');
+        b.classList.add('border-slate-800', 'text-slate-300');
+      }
+    });
+
+    // Desplazar suavemente hacia arriba para comenzar de nuevo
+    elements.front.dropzone.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  if (btnResetAll) {
+    btnResetAll.addEventListener('click', resetAllCards);
+  }
 </script>

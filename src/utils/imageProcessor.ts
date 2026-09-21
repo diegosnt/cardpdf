@@ -1,4 +1,4 @@
-import { CARD_CONFIG, FILE_LIMITS, type ColorMode } from './constants';
+import { CARD_CONFIG, FILE_LIMITS, type ColorMode } from './constants.ts';
 
 export interface CardState {
   file: File | null;
@@ -39,6 +39,63 @@ export function drawRoundedRect(
 }
 
 /**
+ * Calcula los desplazamientos máximos permitidos (maxOffsetX, maxOffsetY)
+ * para evitar que la imagen se salga del cuadro visible.
+ *
+ * Considera las dimensiones del canvas (1011x638 px), las dimensiones naturales
+ * de la imagen, la rotación (0, 90, 180, 270) y el factor de zoom.
+ */
+export function calculateMaxPanOffsets(card: CardState): { maxOffsetX: number; maxOffsetY: number } {
+  if (!card.imageElement) {
+    return { maxOffsetX: 0, maxOffsetY: 0 };
+  }
+
+  const width = CARD_CONFIG.CANVAS_WIDTH_PX;
+  const height = CARD_CONFIG.CANVAS_HEIGHT_PX;
+  const img = card.imageElement;
+
+  const isRotated90or270 = card.rotation % 180 !== 0;
+  const targetW = isRotated90or270 ? height : width;
+  const targetH = isRotated90or270 ? width : height;
+
+  const naturalWidth = img.naturalWidth || width;
+  const naturalHeight = img.naturalHeight || height;
+
+  const baseScale = Math.max(targetW / naturalWidth, targetH / naturalHeight);
+  const drawW = naturalWidth * baseScale;
+  const drawH = naturalHeight * baseScale;
+
+  // Dimensiones efectivas en el espacio del canvas tras rotación y zoom
+  const effectiveW = (isRotated90or270 ? drawH : drawW) * card.zoom;
+  const effectiveH = (isRotated90or270 ? drawW : drawH) * card.zoom;
+
+  // Margen de holgura (35% del canvas) para permitir reencuadre flexible
+  // asegurando siempre que la imagen permanezca claramente visible.
+  const marginX = width * 0.35;
+  const marginY = height * 0.35;
+
+  const maxOffsetX = Math.max((effectiveW - width) / 2, 0) + marginX;
+  const maxOffsetY = Math.max((effectiveH - height) / 2, 0) + marginY;
+
+  return { maxOffsetX, maxOffsetY };
+}
+
+/**
+ * Restringe los valores offsetX y offsetY de la tarjeta dentro de los límites seguros.
+ */
+export function clampCardOffsets(card: CardState): void {
+  if (!card.imageElement) {
+    card.offsetX = 0;
+    card.offsetY = 0;
+    return;
+  }
+
+  const { maxOffsetX, maxOffsetY } = calculateMaxPanOffsets(card);
+  card.offsetX = Math.max(-maxOffsetX, Math.min(maxOffsetX, card.offsetX));
+  card.offsetY = Math.max(-maxOffsetY, Math.min(maxOffsetY, card.offsetY));
+}
+
+/**
  * Procesa una imagen de DNI en un Canvas de alta resolución (300 DPI)
  * aplicando recorte de esquinas redondeadas (3.18 mm), rotación, zoom y modo de color.
  * 
@@ -50,6 +107,8 @@ export async function renderCardToCanvas(
   card: CardState,
   colorMode: ColorMode = 'original'
 ): Promise<HTMLCanvasElement> {
+  clampCardOffsets(card);
+
   const canvas = document.createElement('canvas');
   const width = CARD_CONFIG.CANVAS_WIDTH_PX;
   const height = CARD_CONFIG.CANVAS_HEIGHT_PX;
