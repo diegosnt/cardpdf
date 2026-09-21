@@ -171,29 +171,29 @@ pnpm test
 
 ```text
 cardpdf/
-├── src/
-│   ├── components/
-│   │   └── CardPanel.astro   # Componente modular para las tarjetas de Frente y Dorso
-│   ├── layouts/
-│   │   └── Layout.astro      # Plantilla base, cabecera moderna, badges y favicon SVG
-│   ├── pages/
-│   │   └── index.astro       # Página principal con dropzones, controles y A4 Preview
-│   ├── styles/
-│   │   └── global.css        # Configuración base e importación de Tailwind CSS v4
-│   └── utils/
-│       ├── constants.ts      # Medidas geométricas ID-1 (mm y px a 300 DPI) y layout A4
-│       ├── imageProcessor.ts # Motor Canvas: esquinas 3.18mm, rotación, pan, zoom y validación
-│       └── pdfGenerator.ts   # Generador milimétrico con jsPDF y escala 100%
-├── public/
-│   └── _headers              # Cabeceras HTTP de seguridad estricta (CSP, HSTS, X-Frame-Options)
-├── tests/
-│   └── verify-specs.mjs      # Test unitario automatizado de medidas, seguridad y generación PDF
-├── astro.config.mjs          # Configuración de Astro con plugin Tailwind CSS de Vite
-├── package.json              # Scripts y manifiesto de dependencias
-├── pnpm-workspace.yaml       # Políticas de seguridad pnpm para ejecución de scripts
-├── pnpm-lock.yaml            # Árbol de dependencias estricto e inmutable
-├── tsconfig.json             # Configuración TypeScript en modo estricto
-└── README.md                 # Documentación técnica del proyecto
+├─ src/
+│  ├─ components/
+│  │   └─ CardPanel.astro   # Componente modular para las tarjetas de Frente y Dorso
+│  ├─ layouts/
+│  │   └─ Layout.astro      # Plantilla base, cabecera moderna, badges y favicon SVG
+│  ├─ pages/
+│  │   └─ index.astro       # Página principal con dropzones, controles y A4 Preview
+│  ├─ styles/
+│  │   └─ global.css        # Configuración base e importación de Tailwind CSS v4
+│  └─ utils/
+│      ├─ constants.ts      # Medidas geométricas ID-1 (mm y px a 300 DPI) y layout A4
+│      ├─ imageProcessor.ts # Motor Canvas: esquinas 3.18mm, rotación, pan, zoom y validación
+│      └─ pdfGenerator.ts   # Generador milimétrico con jsPDF y escala 100%
+├─ public/
+│   └─ _headers             # Cabeceras HTTP de seguridad estricta (CSP, HSTS, X-Frame-Options)
+├─ tests/
+│   └─ verify-specs.mjs     # Test unitario automatizado de medidas, seguridad y generación PDF
+├─ astro.config.mjs         # Configuración de Astro con plugin Tailwind CSS de Vite
+├─ package.json             # Scripts y manifiesto de dependencias
+├─ pnpm-workspace.yaml      # Políticas de seguridad pnpm para ejecución de scripts
+├─ pnpm-lock.yaml           # Árbol de dependencias estricto e inmutable
+├─ tsconfig.json            # Configuración TypeScript en modo estricto
+└─ README.md                # Documentación técnica del proyecto
 ```
 
 ---
